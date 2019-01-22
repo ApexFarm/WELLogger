@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>WELLogger</members>
+        <members>WELLoggerTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>WELLog__c</members>
+        <members>WELLoggerSetting__mdt</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>WELLoggerSetting.main</members>
+        <members>WELLoggerSetting.default</members>
+        <name>CustomMetadata</name>
+    </types>
+    <types>
+        <members>WELLogger</members>
+        <name>StaticResource</name>
+    </types>
+    <version>44.0</version>
+</Package>
