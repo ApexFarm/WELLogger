@@ -3,11 +3,13 @@ public with sharing class WELSampleController {
     private static WELLogger.ILogger b = WELLogger.get('worker:b');
 
     public class Response {
+        @AuraEnabled
         Object logs { get; set; }
     }
 
     @RemoteAction
-    public static Response doSomething() {
+    @AuraEnabled
+    public static Response doSomeWork() {
         Response res = new Response();
         try {
             WELLogger.debug('My App');
@@ -33,8 +35,10 @@ public with sharing class WELSampleController {
             invokeNullReferenceException();
         } catch(Exception ex) {
             WELLogger.debug(ex);
+            // throw new AuraHandledException('NSFW name detected.');
         } finally {
             res.logs = WELLogger.logs;
+            WELLogger.save();
         }
         return res;
     }

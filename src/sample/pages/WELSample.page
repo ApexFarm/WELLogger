@@ -3,7 +3,7 @@
     <h1>Congratulations</h1>
     <script>
         Visualforce.remoting.Manager.invokeAction(
-            '{!$RemoteAction.WELSampleController.doSomething}',
+            '{!$RemoteAction.WELSampleController.doSomeWork}',
             function(result, event){
                 if (event.status) {
                     wellogger(result.logs);
