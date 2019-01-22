@@ -1,8 +1,60 @@
 # Well Logger
+WELLogger is a thin wrapper around `System.debug`. It aims to auto pretty format objects from classes such as Exception, and HttpResponse etc.
+```java
+System.debug(ex.getMessage() + ': ' + ex.getStackTrackMessage()); // no more this
+WELLogger.debug(ex); // and do this
+```
+In addition, it also has the following features:
+1. Output logs to database sObject `WELLog__c`.
+2. Output logs to `WELLogger.logs` array, which can be exposed to external API with customization.
+3. Categorize logs by namespaces.
+4. Control logging levels by both outputs and namespaces.
 
 ## Installation
+Upload all source codes under directory `src/logger` to your organization. The best and currently "only" way to update them is via VS Code IDE or sfdx-cli. Because the library is developed with VS Code [Salesforce CLI Integration](https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode-core) extension.
 
 ## Usage
+
+```java
+WELLogger.debug('');
+WELLogger.debug(ex);
+WELLogger.debug(LoggingLevel.Error, '');
+WELLogger.debug(LoggingLevel.Error, ex);
+```
+
+```java
+WELLogger.debug('', ex);
+WELLogger.debug(LoggingLevel.Error, '', ex);
+```
+
+### Logging Levels
+![settings.png]()
+
+
+### Namspaces
+
+```java
+public class MyAccountController {
+    static WELLogger.Logger logger = WELLogger.get('acct:MyAccountController');
+
+    public void doSomeWork() {
+        try {
+            logger.debug('');
+            logger.debug('');
+        } catch (Exception ex) {
+            logger.debug(LoggingLevel.Error, ex);
+        } finally {
+            WELLogger.save(); // save to database
+        }
+    }
+}
+```
+
+### Database Output
+
+### Web Output
+
+![console.png]()
 
 ## License
 MIT License
