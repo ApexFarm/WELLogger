@@ -4,6 +4,8 @@
   <script>
     Visualforce.remoting.Manager.invokeAction(
       '{!$RemoteAction.WELSampleController.doSomeWork}',
+      'value 1',
+      'value 2',
       function(result, event){
         if (event.status) {
           wellogger(result.logs);

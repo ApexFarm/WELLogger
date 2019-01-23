@@ -1,4 +1,5 @@
 public with sharing class WELSampleController {
+    private static WELLogger.ILogger logger = WELLogger.get('sample:WELSampleController');
     private static WELLogger.ILogger a = WELLogger.get('worker:a');
     private static WELLogger.ILogger b = WELLogger.get('worker:b');
 
@@ -9,20 +10,18 @@ public with sharing class WELSampleController {
 
     @RemoteAction
     @AuraEnabled
-    public static Response doSomeWork(String token) {
+    public static Response doSomeWork(String param1, String param2) {
+        logger.debug('[M:E] doSomeWork');
+        logger.debug('[P:param1]', param1);
+        logger.debug('[P:param2]', param2);
+
         Response res = new Response();
         try {
-            WELLogger.debug('My App');
+            WELLogger.debug('doing main work');
             a.debug('doing lots of uninteresting work');
             b.debug('doing some work');
             a.debug('doing lots of uninteresting work');
             b.debug('doing some work');
-            WELLogger.debug('My App');
-            a.debug('doing lots of uninteresting work');
-            b.debug('doing some work');
-            a.debug('doing lots of uninteresting work');
-            b.debug('doing some work');
-
             WELLogger.debug('a list of objects', [
                 SELECT
                     MasterLabel,
@@ -41,6 +40,8 @@ public with sharing class WELSampleController {
             res.logs = WELLogger.logs;
             WELLogger.save();
         }
+
+        logger.debug('[M:X] doSomeWork');
         return res;
     }
 

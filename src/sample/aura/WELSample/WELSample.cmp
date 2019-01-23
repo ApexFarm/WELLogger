@@ -1,4 +1,6 @@
 <aura:component controller="WELSampleController">
+  <aura:attribute name="param1" type="String" default="value 1"/>
+  <aura:attribute name="param2" type="String" default="value 2"/>
   <ltng:require scripts="{!$Resource.WELLogger + '/wellogger.js'}"
     afterScriptsLoaded="{!c.doInit}" />
 </aura:component>

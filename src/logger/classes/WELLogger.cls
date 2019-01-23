@@ -307,21 +307,23 @@ public with sharing class WELLogger {
         protected virtual void format(Object message, Object trace) {
             if (message instanceOf Exception) {
                 Exception ex = (Exception)message;
-                msg = String.format('{0}: {1}', new List<String> {
+                msg = String.format('{0}: {1}\n{2}', new List<String> {
                     ex.getTypeName(),
-                    ex.getMessage()
+                    ex.getMessage(),
+                    ex.getStackTraceString()
                 });
-                trc = ex.getStackTraceString();
             } else if (trace == null) {
                 msg = String.valueOf(message);
             } else if (trace instanceOf Exception) {
                 Exception ex = (Exception)trace;
-                msg = String.format('{0}|{1}: {2}', new List<String> {
+                msg = String.format('{0}|{1}: {2}\n{2}', new List<String> {
                     String.valueOf(message),
                     ex.getTypeName(),
-                    ex.getMessage()
+                    ex.getMessage(),
+                    ex.getStackTraceString()
                 });
-                trc = ex.getStackTraceString();
+            } else if (trace instanceOf String) {
+                msg = message + ' ' + trace;
             } else {
                 msg = String.valueOf(message);
                 trc = trace;
