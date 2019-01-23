@@ -1,4 +1,4 @@
-var debug = require('./browser.js');
+var debug = require('./debug/browser.js');
 module.exports = function(logs) {
   if (logs != null && Array.isArray(logs) && logs.length > 0) {
     debug.log('==========BEGIN==========');

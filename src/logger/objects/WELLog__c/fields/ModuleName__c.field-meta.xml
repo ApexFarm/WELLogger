@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Timestamp__c</fullName>
+    <fullName>ModuleName__c</fullName>
     <externalId>false</externalId>
-    <label>Timestamp</label>
-    <precision>13</precision>
+    <formula>IF(FIND(&#39;:&#39;, Namespace__c) = 0, Namespace__c, LEFT(Namespace__c, FIND(&#39;:&#39;, Namespace__c)-1))</formula>
+    <label>Module Name</label>
     <required>false</required>
-    <scale>0</scale>
     <trackTrending>false</trackTrending>
-    <type>Number</type>
+    <type>Text</type>
     <unique>false</unique>
 </CustomField>

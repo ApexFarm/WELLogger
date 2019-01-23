@@ -12,7 +12,7 @@
     </values>
     <values>
         <field>Logging_Level_Database__c</field>
-        <value xsi:type="xsd:string">NONE</value>
+        <value xsi:type="xsd:string">ERROR</value>
     </values>
     <values>
         <field>Logging_Level_Debug__c</field>

@@ -109,7 +109,7 @@ public with sharing class WELLogger {
                     Namespace__c = log.nsp,
                     Timestamp__c = log.tst,
                     Message__c = log.msg,
-                    Trace__c = String.valueOf(log.trc)
+                    TraceObject__c = String.valueOf(log.trc)
                 ));
             }
             DATABASE.insert(logs);
@@ -254,7 +254,7 @@ public with sharing class WELLogger {
     public virtual class Log {
         @TestVisible
         @AuraEnabled
-        protected Datetime tst { get; private set; }
+        protected Long tst { get; private set; }
         @TestVisible
         @AuraEnabled
         protected String nsp { get; private set; }
@@ -269,7 +269,7 @@ public with sharing class WELLogger {
         protected Object trc { get; private set; }
 
         public Log(LoggingLevel logLvl, String namespace, Object message, Object trace) {
-            tst = Datetime.now();
+            tst = Datetime.now().getTime();
             nsp = namespace;
             format(message, trace);
 

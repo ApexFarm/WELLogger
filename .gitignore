@@ -54,4 +54,4 @@ TestsResultsCache.xml
 .vim-force.com
 .sfdx
 .vscode
-main/default
+src/main
