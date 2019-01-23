@@ -132,7 +132,7 @@ public with sharing class WELLogger {
                     Level__c = log.lvl,
                     Namespace__c = log.nsp,
                     Timestamp__c = log.tst,
-                    Message__c = log.msg + '/n' + String.valueOf(log.trc)
+                    Message__c = log.msg + '\n' + String.valueOf(log.trc)
                 ));
             }
             DATABASE.insert(logs);

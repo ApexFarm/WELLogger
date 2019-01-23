@@ -11,8 +11,8 @@
         <name>CustomObject</name>
     </types>
     <types>
-        <members>WELLoggerSetting.main</members>
-        <members>WELLoggerSetting.default</members>
+        <members>WELLogSetting.main</members>
+        <members>WELLogSetting.default</members>
         <name>CustomMetadata</name>
     </types>
     <types>

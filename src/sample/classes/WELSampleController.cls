@@ -9,7 +9,7 @@ public with sharing class WELSampleController {
 
     @RemoteAction
     @AuraEnabled
-    public static Response doSomeWork() {
+    public static Response doSomeWork(String token) {
         Response res = new Response();
         try {
             WELLogger.debug('My App');
@@ -33,9 +33,10 @@ public with sharing class WELSampleController {
                 FROM WELLogSetting__mdt
             ]);
             invokeNullReferenceException();
+        } catch (DmlException ex) {
+            WELLogger.debug(LoggingLevel.ERROR, ex);
         } catch(Exception ex) {
-            WELLogger.debug(ex);
-            // throw new AuraHandledException('NSFW name detected.');
+            WELLogger.debug(LoggingLevel.ERROR, ex);
         } finally {
             res.logs = WELLogger.logs;
             WELLogger.save();
@@ -46,5 +47,18 @@ public with sharing class WELSampleController {
     static void invokeNullReferenceException() {
         String s;
         s.toLowerCase();
+    }
+
+    static void invokeDMLException() {
+        WELLog__c log = new WELLog__c(
+            Namespace__c =
+                'aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee' +
+                'aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee' +
+                'aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee' +
+                'aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee' +
+                'aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee' +
+                '123456'
+        );
+        insert log;
     }
 }

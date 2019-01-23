@@ -55,3 +55,4 @@ TestsResultsCache.xml
 .sfdx
 .vscode
 src/main
+node_modules

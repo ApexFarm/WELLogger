@@ -1,4 +1,4 @@
 <aura:component controller="WELSampleController">
-    <ltng:require scripts="{!$Resource.WELLogger + '/wellogger.js'}"
-        afterScriptsLoaded="{!c.doInit}" />
+  <ltng:require scripts="{!$Resource.WELLogger + '/wellogger.js'}"
+    afterScriptsLoaded="{!c.doInit}" />
 </aura:component>
