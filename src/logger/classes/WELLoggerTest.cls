@@ -2,19 +2,19 @@
 private without sharing class WELLoggerTest {
     @IsTest
     static void testLoggerSettingDefault() {
-        List<WELLoggerSetting__mdt> loggerSettings = [
+        List<WELLogSetting__mdt> loggerSettings = [
             SELECT
                 MasterLabel,
                 Enabled__c,
                 Logging_Level_Database__c,
                 Logging_Level_Debug__c,
                 Logging_Level_API__c
-            FROM WELLoggerSetting__mdt
+            FROM WELLogSetting__mdt
             WHERE MasterLabel = 'default'
         ];
 
         if (!loggerSettings.isEmpty()) {
-            WELLoggerSetting__mdt loggerSetting = loggerSettings[0];
+            WELLogSetting__mdt loggerSetting = loggerSettings[0];
             WELLogger.LoggerSetting setting = WELLOGGER.get('test').setting;
             System.assertEquals(loggerSetting.Logging_Level_Database__c, setting.loggingLevelDatabase.name());
             System.assertEquals(loggerSetting.Logging_Level_Debug__c, setting.loggingLevelDebug.name());

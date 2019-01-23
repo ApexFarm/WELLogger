@@ -7,7 +7,7 @@
     </types>
     <types>
         <members>WELLog__c</members>
-        <members>WELLoggerSetting__mdt</members>
+        <members>WELLogSetting__mdt</members>
         <name>CustomObject</name>
     </types>
     <types>

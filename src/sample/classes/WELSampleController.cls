@@ -30,7 +30,7 @@ public with sharing class WELSampleController {
                     Logging_Level_Database__c,
                     Logging_Level_Debug__c,
                     Logging_Level_API__c
-                FROM WELLoggerSetting__mdt
+                FROM WELLogSetting__mdt
             ]);
             invokeNullReferenceException();
         } catch(Exception ex) {

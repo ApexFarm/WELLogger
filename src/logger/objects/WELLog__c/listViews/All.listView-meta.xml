@@ -6,7 +6,6 @@
     <columns>Namespace__c</columns>
     <columns>Level__c</columns>
     <columns>Message__c</columns>
-    <columns>TraceObject__c</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>
 </ListView>

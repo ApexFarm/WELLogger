@@ -28,7 +28,7 @@ WELLogger.debug(LoggingLevel.Error, '', ex);
 ```
 
 ### Logging Levels
-![settings.png]()
+![settings.png](doc/settings.png)
 
 
 ### Namspaces
@@ -54,7 +54,7 @@ public class MyAccountController {
 
 ### Web Output
 
-![console.png]()
+![console.png](doc/console.png)
 
 ## License
 MIT License

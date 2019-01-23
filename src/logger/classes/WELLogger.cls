@@ -3,30 +3,54 @@ public with sharing class WELLogger {
     @TestVisible
     private static final Map<String, LoggerSetting> LOGGER_SETTING_CACHE;
     private static final Map<String, Logger> LOGGER_CACHE;
-
-    private static Integer LOG_CACHE_DATABASE_SAVE_INDEX;
     private static final List<Log> LOG_CACHE_DATABASE;
     private static final List<Log> LOG_CACHE_API;
 
     private static final String LOGGER_NAME_DEFAULT = 'default';
     private static final String LOGGER_NAME_MAIN = 'main';
-    private static LoggerSetting DEFAULT_LOGGER_SETTING;
+    private static final LoggerSetting DEFAULT_LOGGER_SETTING;
     private static final Logger MAIN_LOGGER;
+
+    private static Integer savedLogIndex;
+    private static CallContext callContext;
 
     static {
         SYSTEM_LOGGING_LEVELS = new Map<String, LoggingLevel>();
         LOGGER_SETTING_CACHE = new Map<String, LoggerSetting>();
         LOGGER_CACHE = new Map<String, Logger>();
-        LOG_CACHE_DATABASE_SAVE_INDEX = 0;
         LOG_CACHE_DATABASE = new List<Log>();
         LOG_CACHE_API = new List<Log>();
+        savedLogIndex = 0;
 
         loadLoggingLevelMap();
         loadLoggerSettings();
+
+        if (LOGGER_SETTING_CACHE.containsKey(LOGGER_NAME_DEFAULT)) {
+            DEFAULT_LOGGER_SETTING = LOGGER_SETTING_CACHE.get(LOGGER_NAME_DEFAULT);
+        } else {
+            DEFAULT_LOGGER_SETTING = new LoggerSetting();
+            DEFAULT_LOGGER_SETTING.loggingLevelDatabase = LoggingLevel.NONE;
+            DEFAULT_LOGGER_SETTING.loggingLevelDebug = LoggingLevel.DEBUG;
+            DEFAULT_LOGGER_SETTING.loggingLevelAPI = LoggingLevel.NONE;
+            DEFAULT_LOGGER_SETTING.enabled = true;
+        }
+
+        if (!LOGGER_SETTING_CACHE.containsKey(LOGGER_NAME_MAIN)) {
+            LOGGER_SETTING_CACHE.put(LOGGER_NAME_MAIN, DEFAULT_LOGGER_SETTING);
+        }
+
         MAIN_LOGGER = get(LOGGER_NAME_MAIN);
     }
 
     private WELLogger() {}
+
+    enum CallContext {
+
+    }
+
+    public static void init(CallContext ctx) {
+
+    }
 
     public static Logger get(String name) {
         if (String.isBlank(name)) {
@@ -100,20 +124,19 @@ public with sharing class WELLogger {
     }
 
     public static void save() {
-        if (LOG_CACHE_DATABASE.SIZE() > LOG_CACHE_DATABASE_SAVE_INDEX) {
+        if (LOG_CACHE_DATABASE.SIZE() > savedLogIndex) {
             List<WELLog__c> logs = new List<WELLog__c>();
-            for (Integer i = LOG_CACHE_DATABASE_SAVE_INDEX; i < LOG_CACHE_DATABASE.SIZE(); i++) {
+            for (Integer i = savedLogIndex; i < LOG_CACHE_DATABASE.SIZE(); i++) {
                 Log log = LOG_CACHE_DATABASE[i];
                 logs.add(new WELLog__c(
                     Level__c = log.lvl,
                     Namespace__c = log.nsp,
                     Timestamp__c = log.tst,
-                    Message__c = log.msg,
-                    TraceObject__c = String.valueOf(log.trc)
+                    Message__c = log.msg + '/n' + String.valueOf(log.trc)
                 ));
             }
             DATABASE.insert(logs);
-            LOG_CACHE_DATABASE_SAVE_INDEX = LOG_CACHE_DATABASE.size();
+            savedLogIndex = LOG_CACHE_DATABASE.size();
         }
     }
 
@@ -124,30 +147,16 @@ public with sharing class WELLogger {
     }
 
     private static void loadLoggerSettings() {
-        for (WELLoggerSetting__mdt setting : [
+        for (WELLogSetting__mdt setting : [
             SELECT
                 MasterLabel,
                 Enabled__c,
                 Logging_Level_Database__c,
                 Logging_Level_Debug__c,
                 Logging_Level_API__c
-            FROM WELLoggerSetting__mdt
+            FROM WELLogSetting__mdt
         ]) {
             LOGGER_SETTING_CACHE.put(setting.MasterLabel, new LoggerSetting(setting));
-        }
-
-        if (LOGGER_SETTING_CACHE.containsKey(LOGGER_NAME_DEFAULT)) {
-            DEFAULT_LOGGER_SETTING = LOGGER_SETTING_CACHE.get(LOGGER_NAME_DEFAULT);
-        } else {
-            DEFAULT_LOGGER_SETTING = new LoggerSetting();
-            DEFAULT_LOGGER_SETTING.loggingLevelDatabase = LoggingLevel.NONE;
-            DEFAULT_LOGGER_SETTING.loggingLevelDebug = LoggingLevel.DEBUG;
-            DEFAULT_LOGGER_SETTING.loggingLevelAPI = LoggingLevel.NONE;
-            DEFAULT_LOGGER_SETTING.enabled = true;
-        }
-
-        if (!LOGGER_SETTING_CACHE.containsKey(LOGGER_NAME_MAIN)) {
-            LOGGER_SETTING_CACHE.put(LOGGER_NAME_MAIN, DEFAULT_LOGGER_SETTING);
         }
     }
 
@@ -161,7 +170,7 @@ public with sharing class WELLogger {
 
         }
 
-        public LoggerSetting(WELLoggerSetting__mdt setting) {
+        public LoggerSetting(WELLogSetting__mdt setting) {
             enabled = setting.Enabled__c;
             loggingLevelDatabase = SYSTEM_LOGGING_LEVELS.get(setting.Logging_Level_Database__c);
             loggingLevelDebug = SYSTEM_LOGGING_LEVELS.get(setting.Logging_Level_Debug__c);
