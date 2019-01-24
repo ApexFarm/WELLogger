@@ -15,13 +15,13 @@ private without sharing class WELLoggerTest {
 
         if (!loggerSettings.isEmpty()) {
             WELLogSetting__mdt loggerSetting = loggerSettings[0];
-            WELLogger.LoggerSetting setting = WELLOGGER.get('test').setting;
+            WELLogger.LoggerSetting setting = ((WELLogger.Logger)WELLOGGER.get('test')).setting;
             System.assertEquals(loggerSetting.Logging_Level_Database__c, setting.loggingLevelDatabase.name());
             System.assertEquals(loggerSetting.Logging_Level_Debug__c, setting.loggingLevelDebug.name());
             System.assertEquals(loggerSetting.Logging_Level_API__c, setting.loggingLevelAPI.name());
             System.assertEquals(loggerSetting.Enabled__c, setting.enabled);
         } else {
-            WELLogger.LoggerSetting setting = WELLOGGER.get('test').setting;
+            WELLogger.LoggerSetting setting = ((WELLogger.Logger)WELLOGGER.get('test')).setting;
             System.assertEquals(LoggingLevel.NONE, setting.loggingLevelDatabase);
             System.assertEquals(LoggingLevel.DEBUG, setting.loggingLevelDebug);
             System.assertEquals(LoggingLevel.NONE, setting.loggingLevelAPI);
@@ -79,7 +79,8 @@ private without sharing class WELLoggerTest {
             Map<String, String> dict;
             dict.get('key');
         } catch (Exception ex) {
-            WELLogger.get('test').debug(LoggingLevel.ERROR, ex).save();
+            WELLogger.get('test').debug(LoggingLevel.ERROR, ex);
+            WELLogger.save();
         }
         List<WELLogger.Log> logs = WELLogger.logs;
         List<WELLog__c> dbLogs = [
@@ -202,7 +203,8 @@ private without sharing class WELLoggerTest {
         WELLogger.LOGGER_SETTING_CACHE.put('test', setting);
 
         WELLogger.ILogger c = WELLogger.get('test:c', CustomLogger.class);
-        c.debug('******').save();
+        c.debug('******');
+        WELLogger.save();
         System.assertEquals(3, WELLogger.logs.size());
         List<WELLog__c> dbLogs = [
             SELECT Id
@@ -221,47 +223,31 @@ private without sharing class WELLoggerTest {
         WELLogger.LOGGER_SETTING_CACHE.put('test', setting);
 
         WELLogger.ILogger a = WELLogger.get('test:a');
-        a.debug('******').save();
+        a.debug('******');
+        a.debug('******');
+        WELLogger.save();
+
         {
             List<WELLog__c> dbLogs = [
                 SELECT Id
                 FROM WELLog__c
             ];
-            System.assertEquals(1, dbLogs.size());
+            System.assertEquals(2, dbLogs.size());
         }
 
-        a.debug('******').save();
         a.debug('******');
-        a.debug('******').save();
         a.debug('******');
+        WELLogger.save();
+        WELLogger.save();
+        a.debug('******');
+        a.debug('******');
+
         {
             List<WELLog__c> dbLogs = [
                 SELECT Id
                 FROM WELLog__c
             ];
             System.assertEquals(4, dbLogs.size());
-        }
-
-        WELLogger.save();
-        WELLogger.save();
-        WELLogger.save();
-        a.debug('******');
-        {
-            List<WELLog__c> dbLogs = [
-                SELECT Id
-                FROM WELLog__c
-            ];
-            System.assertEquals(5, dbLogs.size());
-        }
-
-        WELLogger.save();
-        a.debug('******').save();
-        {
-            List<WELLog__c> dbLogs = [
-                SELECT Id
-                FROM WELLog__c
-            ];
-            System.assertEquals(7, dbLogs.size());
         }
     }
 }

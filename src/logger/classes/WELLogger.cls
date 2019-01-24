@@ -9,10 +9,9 @@ public with sharing class WELLogger {
     private static final String LOGGER_NAME_DEFAULT = 'default';
     private static final String LOGGER_NAME_MAIN = 'main';
     private static final LoggerSetting DEFAULT_LOGGER_SETTING;
-    private static final Logger MAIN_LOGGER;
+    private static final ILogger MAIN_LOGGER;
 
     private static Integer savedLogIndex;
-    private static CallContext callContext;
 
     static {
         SYSTEM_LOGGING_LEVELS = new Map<String, LoggingLevel>();
@@ -42,17 +41,29 @@ public with sharing class WELLogger {
         MAIN_LOGGER = get(LOGGER_NAME_MAIN);
     }
 
+    private static void loadLoggingLevelMap() {
+        for (LoggingLevel enumValue : LoggingLevel.values()) {
+            SYSTEM_LOGGING_LEVELS.put(String.valueOf(enumValue).toUpperCase(), enumValue);
+        }
+    }
+
+    private static void loadLoggerSettings() {
+        for (WELLogSetting__mdt setting : [
+            SELECT
+                MasterLabel,
+                Enabled__c,
+                Logging_Level_Database__c,
+                Logging_Level_Debug__c,
+                Logging_Level_API__c
+            FROM WELLogSetting__mdt
+        ]) {
+            LOGGER_SETTING_CACHE.put(setting.MasterLabel, new LoggerSetting(setting));
+        }
+    }
+
     private WELLogger() {}
 
-    enum CallContext {
-
-    }
-
-    public static void init(CallContext ctx) {
-
-    }
-
-    public static Logger get(String name) {
+    public static ILogger get(String name) {
         if (String.isBlank(name)) {
             return MAIN_LOGGER;
         }
@@ -64,7 +75,7 @@ public with sharing class WELLogger {
         return get(name, new Logger());
     }
 
-    public static Logger get(String name, Type className) {
+    public static ILogger get(String name, Type className) {
         if (String.isBlank(name)) {
             return MAIN_LOGGER;
         }
@@ -85,7 +96,7 @@ public with sharing class WELLogger {
         }
     }
 
-    private static Logger get(String namespace, Logger newLogger) {
+    private static ILogger get(String namespace, Logger newLogger) {
         if (String.isBlank(namespace) || newLogger == null) {
             return MAIN_LOGGER;
         }
@@ -101,20 +112,20 @@ public with sharing class WELLogger {
         return newLogger;
     }
 
-    public static ILogger debug(Object message) {
-        return MAIN_LOGGER.debug(LoggingLevel.DEBUG, message);
+    public static void debug(Object message) {
+        MAIN_LOGGER.debug(LoggingLevel.DEBUG, message);
     }
 
-    public static ILogger debug(LoggingLevel logLvl, Object message) {
-        return MAIN_LOGGER.debug(logLvl, message);
+    public static void debug(LoggingLevel logLvl, Object message) {
+        MAIN_LOGGER.debug(logLvl, message);
     }
 
-    public static ILogger debug(String message, Object trace) {
-        return MAIN_LOGGER.debug(LoggingLevel.DEBUG, message, trace);
+    public static void debug(String message, Object trace) {
+        MAIN_LOGGER.debug(LoggingLevel.DEBUG, message, trace);
     }
 
-    public static ILogger debug(LoggingLevel logLvl, String message, Object trace) {
-        return MAIN_LOGGER.debug(logLvl, message, trace);
+    public static void debug(LoggingLevel logLvl, String message, Object trace) {
+        MAIN_LOGGER.debug(logLvl, message, trace);
     }
 
     public static List<Log> logs {
@@ -140,26 +151,6 @@ public with sharing class WELLogger {
         }
     }
 
-    private static void loadLoggingLevelMap() {
-        for (LoggingLevel enumValue : LoggingLevel.values()) {
-            SYSTEM_LOGGING_LEVELS.put(String.valueOf(enumValue).toUpperCase(), enumValue);
-        }
-    }
-
-    private static void loadLoggerSettings() {
-        for (WELLogSetting__mdt setting : [
-            SELECT
-                MasterLabel,
-                Enabled__c,
-                Logging_Level_Database__c,
-                Logging_Level_Debug__c,
-                Logging_Level_API__c
-            FROM WELLogSetting__mdt
-        ]) {
-            LOGGER_SETTING_CACHE.put(setting.MasterLabel, new LoggerSetting(setting));
-        }
-    }
-
     public class LoggerSetting {
         public LoggingLevel loggingLevelDatabase { get; set; }
         public LoggingLevel loggingLevelDebug { get; set; }
@@ -179,11 +170,10 @@ public with sharing class WELLogger {
     }
 
     public interface LoggerInterface {
-        ILogger debug(Object message);
-        ILogger debug(LoggingLevel logLvl, Object message);
-        ILogger debug(String message, Object trace);
-        ILogger debug(LoggingLevel logLvl, String message, Object trace);
-        void save();
+        void debug(Object message);
+        void debug(LoggingLevel logLvl, Object message);
+        void debug(String message, Object trace);
+        void debug(LoggingLevel logLvl, String message, Object trace);
     }
 
     public interface ILogger extends LoggerInterface  {
@@ -196,24 +186,20 @@ public with sharing class WELLogger {
         @TestVisible
         protected String namespace;
 
-        public ILogger debug(Object message) {
+        public void debug(Object message) {
             this.internalDebug(LoggingLevel.DEBUG, message, null);
-            return this;
         }
 
-        public ILogger debug(LoggingLevel logLvl, Object message) {
+        public void debug(LoggingLevel logLvl, Object message) {
             this.internalDebug(logLvl, message, null);
-            return this;
         }
 
-        public ILogger debug(String message, Object trace) {
+        public void debug(String message, Object trace) {
             this.internalDebug(LoggingLevel.DEBUG, message, trace);
-            return this;
         }
 
-        public ILogger debug(LoggingLevel logLvl, String message, Object trace) {
+        public void debug(LoggingLevel logLvl, String message, Object trace) {
             this.internalDebug(logLvl, message, trace);
-            return this;
         }
 
         protected virtual void internalDebug(LoggingLevel logLvl, Object message, Object trace) {
@@ -253,10 +239,6 @@ public with sharing class WELLogger {
 
         protected void addAllAPILogs(List<Log> logs) {
             LOG_CACHE_API.addAll(logs);
-        }
-
-        public void save() {
-            WELLogger.save();
         }
     }
 

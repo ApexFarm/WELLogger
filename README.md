@@ -2,7 +2,7 @@
 WELLogger is a thin wrapper around `System.debug`. It aims to pretty format objects for classes such as Exception, and HttpResponse etc automatically.
 ```java
 System.debug(ex.getMessage() + ': ' + ex.getStackTrackMessage()); // no more this
-WELLogger.debug(ex);                                              // just do this
+WELLogger.debug(ex); // just do this
 ```
 In addition, it also has the following features:
 1. Output logs to database sObject `WELLog__c`.
@@ -13,6 +13,11 @@ In addition, it also has the following features:
 ## Installation
 
 Upload all source codes under directory `src/logger` to your organization. The best and currently "only" way to update them is via VS Code IDE or sfdx-cli. Because the library is developed with VS Code [Salesforce CLI Integration](https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode-core) extension.
+
+1. Download the source code
+2. Open VS Code with sfdx-cli right configured
+3. Issue command `SFDX: Authorize an Org` for your organization
+4. Right click the directory `src/logger` and `SFDX: Deploy Source to Org`
 
 ## Usage
 
@@ -30,7 +35,18 @@ WELLogger.debug('error description', ex);
 WELLogger.debug(LoggingLevel.Error, 'error description', ex);
 ```
 
-When used in this way, all logs will be default to the `main` namespace implicitly.
+When used in above way, all logs will be default to the `main` namespace implicitly. Here is how to define loggers with custom namespaces. If a custom module doesn't have a WELLog Setting, the `default` setting will be applied. 
+
+```java
+// WELLogger.ILogger and WELLogger.LoggerInterface can be used interchangeably
+WELLogger.ILogger logger = WELLogger.get('module_name:feature_name:modifier');
+logger.debug('doing some work');
+logger.debug(ex);
+logger.debug(LoggingLevel.DEBUG, 'doing some work');
+logger.debug(LoggingLevel.ERROR, ex);
+logger.debug('error description', ex);
+logger.debug(LoggingLevel.Error, 'error description', ex);
+```
 
 ### Namespaces
 
@@ -39,13 +55,13 @@ Each log must have a namespace. A namespace should generally follow a pattern li
 | Namespace Part | Description                                                  |
 | -------------- | ------------------------------------------------------------ |
 | Module Name    | **Required**. Module name should be short and descriptive words. |
-| Feature Name   | **Optional**. Feature name could be a function name.         |
+| Feature Name   | **Optional**. Feature name could be a short functional description, a class name, or the artchitecture layer etc. |
 | Modifier       | **Optional**. Supplement to the feature name.                |
 
-However, a good namespace pattern can always be invented to suit your project needs. `module_name:class_name` is not a good alternative, but may be useful in some circumstances.
+However, a good namespace pattern can always be invented to suit your project needs. `module_name:class_name` might not be a good alternative, but it is useful and straightforward in some circumstances.
 
-#### Module Logging Settings
-Module logging settings are controlled by the `WELLogSetting__mdt` custom metadata type. There are two built-in module logging settings `main` and `default`. All logs printed from `WELLogger.debug` API are controlled by the `main` module logging setting.
+#### Module Logging Levels
+Use  `WELLogSetting__mdt` custom metadata type to control Module logging levels. There are two built-in modules `main` and `default`.
 
 ![settings.png](doc/settings.png)
 
@@ -55,19 +71,6 @@ Module logging settings are controlled by the `WELLogSetting__mdt` custom metada
 | Enabled           | Toggle the logs output for an entire module.                 |
 | Logging Level *** | Controls the logging level for each of the three output types. |
 
-
-#### Custom Namespace
-
-Here is an example for how to define loggers with custom namespaces. If a custom module doesn't have a WELLog Setting, the `default` setting will be applied. 
-
-```java
-// NOTE: WELLogger.ILogger and WELLogger.LoggerInterface can be used interchangeably
-WELLogger.ILogger logger = WELLogger.get('module_name:feature_name:modifier');
-logger.debug('doing some work');
-logger.debug(ex);
-logger.debug(LoggingLevel.DEBUG, 'doing some work');
-logger.debug(LoggingLevel.ERROR, ex);
-```
 ### Logging Outputs
 
 The library supports three output types:
@@ -76,15 +79,15 @@ The library supports three output types:
 | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | Database | Persist logs into sObject `WELLog__c`, after calling `WELLogger.save()` method. | Only enable this output for critical issues and exceptions.  |
 | Debug    | Persist logs into the standard system debug logs.            | Main debug methodology, use this for daily development debugging activities as well as production debug, and performance tuning etc. |
-| API      | Logs will not be persisted. Pull logs when needed from `WELLogger.logs`. | It is useful when logs can be viewed externally. It won't impact the 250MB debug log size limit, if APIs are called frequently and a lot of data/messages are carried. **Note**: This should be turned off on production, unless another level of security is built on top of this library. |
+| API      | Logs will not be persisted. Pull logs when needed from `WELLogger.logs`. | It is useful when logs can be viewed externally. It won't impact the 250MB debug log size limit, if APIs are called frequently and a lot of data/messages are carried with logs. **Note**: This should be turned off on production, unless another level of security is built on top of this library. |
 
 #### Database Output
 
-Here is an example for how to use `WELLogger.save()` to save logs into the database. Please limit this try catch pattern only to the entrance method of the current excecution context, i.e. `execute()` method for batch classes.
+Here is the best approach for how to use `WELLogger.save()` to save logs into the database. Please limit this `try catch finally` pattern only to the entrance method of the current excecution context, i.e. `execute()` method for batch classes.
 
 ```java
 public class MyAccountController {
-    // NOTE: WELLogger.ILogger and WELLogger.LoggerInterface can be used interchangeably
+    // WELLogger.ILogger and WELLogger.LoggerInterface can be used interchangeably
     static WELLogger.ILogger logger = WELLogger.get('acct:MyAccountController');
     
     class Response {
