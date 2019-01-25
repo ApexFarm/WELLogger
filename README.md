@@ -12,12 +12,25 @@ In addition, it also has the following features:
 
 ## Installation
 
-Upload all source codes under directory `src/logger` to your organization. The best and currently "only" way to update them is via VS Code IDE or sfdx-cli. Because the library is developed with VS Code [Salesforce CLI Integration](https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode-core) extension.
+There are two ways to deploy them into your organization:
+
+#### 1. Ant Migration Tool
+
+This is the most common way if you are not familiar with `sfdx-cli`. Upload all source codes under directory `dist` by any tool/IDE supporting the file structure understandable by [Ant Migration Tool](https://developer.salesforce.com/docs/atlas.en-us.daas.meta/daas/meta_development.htm). Here are steps for how to upload them via workbench:
+
+1. Download the source code
+2. Zip the `dist` folder
+3. Login into [workbench](https://workbench.developerforce.com)
+4. Choose `migration -> Deploy` to upload the zip file
+
+#### 2. SFDX-CLI or VS Code
+
+If you are familiar with `sfdx-cli`, you can upload all source codes under directory `src/logger` to your organization via sfdx-cli or VS Code. Because the library is developed with VS Code [Salesforce CLI Integration](https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode-core) extension.
 
 1. Download the source code
 2. Open VS Code with sfdx-cli right configured
 3. Issue command `SFDX: Authorize an Org` for your organization
-4. Right click the directory `src/logger` and `SFDX: Deploy Source to Org`
+4. Right click the directory `src/logger` and issue command `SFDX: Deploy Source to Org`
 
 ## Usage
 
