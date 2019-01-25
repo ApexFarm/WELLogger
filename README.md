@@ -48,7 +48,7 @@ WELLogger.debug('error description', ex);
 WELLogger.debug(LoggingLevel.Error, 'error description', ex);
 ```
 
-When used in above way, all logs will be default to the `main` namespace implicitly. Here is how to define loggers with custom namespaces. If a custom module doesn't have a WELLog Setting, the `default` setting will be applied. 
+When used in above way, all logs will be default to the `main` namespace implicitly. To define loggers with custom namespaces, please use the `WELLogger.get()` API as below. If a custom module doesn't have a WELLog Setting, the `default` setting will be applied. We will talk more about namespaces and settings in the next section.
 
 ```java
 // WELLogger.ILogger and WELLogger.LoggerInterface can be used interchangeably
@@ -71,10 +71,10 @@ Each log must have a namespace. A namespace should generally follow a pattern li
 | Feature Name   | **Optional**. Feature name could be a short functional description, a class name, or the artchitecture layer etc. |
 | Modifier       | **Optional**. Supplement to the feature name.                |
 
-However, a good namespace pattern can always be invented to suit your project needs. `module_name:class_name` might not be a good alternative, but it is useful and straightforward in some circumstances.
+However, new good namespace pattern can always be invented to suit your project needs. `module_name:class_name` might not be a good alternative, but it is useful and straightforward in some circumstances.
 
 #### Module Logging Levels
-Use  `WELLogSetting__mdt` custom metadata type to control Module logging levels. There are two built-in modules `main` and `default`.
+Use  `WELLogSetting__mdt` custom metadata type to control logging levels for each module. There are two built-in modules `main` and `default`. Their usage has been explained in the above section.
 
 ![settings.png](doc/settings.png)
 
