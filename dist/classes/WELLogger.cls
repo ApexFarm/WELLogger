@@ -2,7 +2,7 @@ public with sharing class WELLogger {
     private static final Map<String, LoggingLevel> SYSTEM_LOGGING_LEVELS;
     @TestVisible
     private static final Map<String, LoggerSetting> LOGGER_SETTING_CACHE;
-    private static final Map<String, Logger> LOGGER_CACHE;
+    private static final Map<String, ILogger> LOGGER_CACHE;
     private static final List<Log> LOG_CACHE_DATABASE;
     private static final List<Log> LOG_CACHE_API;
 
@@ -64,10 +64,6 @@ public with sharing class WELLogger {
     private WELLogger() {}
 
     public static ILogger get(String name) {
-        if (String.isBlank(name)) {
-            return MAIN_LOGGER;
-        }
-
         if (LOGGER_CACHE.containsKey(name)) {
             return LOGGER_CACHE.get(name);
         }
@@ -76,10 +72,6 @@ public with sharing class WELLogger {
     }
 
     public static ILogger get(String name, Type className) {
-        if (String.isBlank(name)) {
-            return MAIN_LOGGER;
-        }
-
         if (LOGGER_CACHE.containsKey(name)) {
             return LOGGER_CACHE.get(name);
         }
@@ -97,7 +89,7 @@ public with sharing class WELLogger {
     }
 
     private static ILogger get(String namespace, Logger newLogger) {
-        if (String.isBlank(namespace) || newLogger == null) {
+        if (namespace == null) {
             return MAIN_LOGGER;
         }
 
@@ -137,13 +129,14 @@ public with sharing class WELLogger {
     public static void save() {
         if (LOG_CACHE_DATABASE.SIZE() > savedLogIndex) {
             List<WELLog__c> logs = new List<WELLog__c>();
-            for (Integer i = savedLogIndex; i < LOG_CACHE_DATABASE.SIZE(); i++) {
-                Log log = LOG_CACHE_DATABASE[i];
+            Log log;
+            for (Integer i = savedLogIndex; i < LOG_CACHE_DATABASE.SIZE(); ++i) {
+                log = LOG_CACHE_DATABASE[i];
                 logs.add(new WELLog__c(
                     Level__c = log.lvl,
                     Namespace__c = log.nsp,
                     Timestamp__c = log.tst,
-                    Message__c = log.msg + '\n' + String.valueOf(log.trc)
+                    Message__c = log.msg + '\r\n' + String.valueOf(log.trc)
                 ));
             }
             DATABASE.insert(logs);
@@ -163,13 +156,20 @@ public with sharing class WELLogger {
 
         public LoggerSetting(WELLogSetting__mdt setting) {
             enabled = setting.Enabled__c;
-            loggingLevelDatabase = SYSTEM_LOGGING_LEVELS.get(setting.Logging_Level_Database__c);
-            loggingLevelDebug = SYSTEM_LOGGING_LEVELS.get(setting.Logging_Level_Debug__c);
-            loggingLevelAPI = SYSTEM_LOGGING_LEVELS.get(setting.Logging_Level_API__c);
+            if (enabled) {
+                loggingLevelDatabase = SYSTEM_LOGGING_LEVELS.get(setting.Logging_Level_Database__c);
+                loggingLevelDebug = SYSTEM_LOGGING_LEVELS.get(setting.Logging_Level_Debug__c);
+                loggingLevelAPI = SYSTEM_LOGGING_LEVELS.get(setting.Logging_Level_API__c);
+            } else {
+                loggingLevelDatabase = LoggingLevel.NONE;
+                loggingLevelDebug = LoggingLevel.NONE;
+                loggingLevelAPI = LoggingLevel.NONE;
+            }
         }
     }
 
     public interface LoggerInterface {
+        ILogger get(String name);
         void debug(Object message);
         void debug(LoggingLevel logLvl, Object message);
         void debug(String message, Object trace);
@@ -185,6 +185,16 @@ public with sharing class WELLogger {
         protected LoggerSetting setting;
         @TestVisible
         protected String namespace;
+
+        public ILogger get(String name) {
+            String namespace = this.namespace + ':' + name;
+            if (LOGGER_CACHE.containsKey(namespace)) {
+                return LOGGER_CACHE.get(namespace);
+            }
+            Logger logger = this.clone();
+            logger.namespace = namespace;
+            return logger;
+        }
 
         public void debug(Object message) {
             this.internalDebug(LoggingLevel.DEBUG, message, null);
@@ -204,7 +214,7 @@ public with sharing class WELLogger {
 
         protected virtual void internalDebug(LoggingLevel logLvl, Object message, Object trace) {
             if (!this.setting.enabled) {
-                System.debug(logLvl, message + '\n' + trace);
+                System.debug(logLvl, message + '\r\n' + trace);
                 return;
             }
 
@@ -220,7 +230,7 @@ public with sharing class WELLogger {
             }
 
             if (this.setting.loggingLevelDebug != LoggingLevel.NONE
-            && this.setting.loggingLevelDebug.ordinal() <= logLvl.ordinal()) {
+                && this.setting.loggingLevelDebug.ordinal() <= logLvl.ordinal()) {
                 System.debug(logLvl, log);
             }
         }
@@ -289,7 +299,7 @@ public with sharing class WELLogger {
         protected virtual void format(Object message, Object trace) {
             if (message instanceOf Exception) {
                 Exception ex = (Exception)message;
-                msg = String.format('{0}: {1}\n{2}', new List<String> {
+                msg = String.format('{0}: {1}\r\n{2}', new List<String> {
                     ex.getTypeName(),
                     ex.getMessage(),
                     ex.getStackTraceString()
@@ -298,27 +308,32 @@ public with sharing class WELLogger {
                 msg = String.valueOf(message);
             } else if (trace instanceOf Exception) {
                 Exception ex = (Exception)trace;
-                msg = String.format('{0}|{1}: {2}\n{2}', new List<String> {
+                msg = String.format('{0}|{1}: {2}\r\n{3}', new List<String> {
                     String.valueOf(message),
                     ex.getTypeName(),
                     ex.getMessage(),
                     ex.getStackTraceString()
                 });
-            } else if (trace instanceOf String) {
-                msg = message + ' ' + trace;
             } else {
-                msg = String.valueOf(message);
+                msg = (String)message;
                 trc = trace;
             }
         }
 
         public virtual override String toString() {
-            String format = '[{0}]|{1}';
+            String format;
             if (trc != null) {
-                format = '[{0}]|{1}\n{2}';
+                if (trc instanceOf String) {
+                    format = '[{0}]|{1}|"{2}"';
+                    return String.format(format, new List<String> { nsp, msg, (String)trc });
+                } else {
+                    format = '[{0}]|{1}|{2}';
+                    return String.format(format, new List<String> { nsp, msg, String.valueOf(trc) });
+                }
+            } else {
+                format = '[{0}]|{1}';
+                return String.format(format, new List<String> { nsp, msg });
             }
-            return String.format(format,
-                new List<String> { nsp, msg, String.valueOf(trc) });
         }
     }
 }

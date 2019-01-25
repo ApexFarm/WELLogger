@@ -48,17 +48,22 @@ WELLogger.debug('error description', ex);
 WELLogger.debug(LoggingLevel.Error, 'error description', ex);
 ```
 
-When used in above way, all logs will be default to the `main` namespace implicitly. To define loggers with custom namespaces, please use the `WELLogger.get()` API as below. If a custom module doesn't have a WELLog Setting, the `default` setting will be applied. We will talk more about namespaces and settings in the next section.
+When used in above way, all logs will be default to the `main` namespace implicitly. To define loggers with custom namespaces i.e. `module_name:feature_name:modifier`, please use the `WELLogger.get()` API as below. If a custom module doesn't have a WELLog Setting, the `default` setting will be applied. We will talk more about namespaces and settings in the next section.
 
 ```java
 // WELLogger.ILogger and WELLogger.LoggerInterface can be used interchangeably
 WELLogger.ILogger logger = WELLogger.get('module_name:feature_name:modifier');
-logger.debug('doing some work');
 logger.debug(ex);
-logger.debug(LoggingLevel.DEBUG, 'doing some work');
 logger.debug(LoggingLevel.ERROR, ex);
-logger.debug('error description', ex);
 logger.debug(LoggingLevel.Error, 'error description', ex);
+```
+
+Logger namespace can be chained to create new loggers in another namespace.
+
+```java
+WELLogger.ILogger logger = WELLogger.get('module_name'); // namespace = 'module_name'
+logger = logger.get('feature_name'); // namespace = 'module_name:feature_name'
+logger = logger.get('modifier'); // namespace = 'module_name:feature_name:modifier'
 ```
 
 ### Namespaces
@@ -69,9 +74,9 @@ Each log must have a namespace. A namespace should generally follow a pattern li
 | -------------- | ------------------------------------------------------------ |
 | Module Name    | **Required**. Module name should be short and descriptive words. |
 | Feature Name   | **Optional**. Feature name could be a short functional description, a class name, or the artchitecture layer etc. |
-| Modifier       | **Optional**. Supplement to the feature name.                |
+| Modifier       | **Optional**. Supplement to the feature name to further classify the log contexts. Is it an exception? How severe is it? |
 
-However, new good namespace pattern can always be invented to suit your project needs. `module_name:class_name` might not be a good alternative, but it is useful and straightforward in some circumstances.
+However, new good namespace pattern can always be invented to suit your project needs. `module_name:class_name` might not be a good alternative, but it is useful and straightforward in some circumstances. Once formula fields created to parse the namespace context out, we can use them to generate much meaningful reports. 
 
 #### Module Logging Levels
 Use  `WELLogSetting__mdt` custom metadata type to control logging levels for each module. There are two built-in modules `main` and `default`. Their usage has been explained in the above section.
@@ -99,9 +104,9 @@ The library supports three output types:
 Here is the best approach for how to use `WELLogger.save()` to save logs into the database. Please limit this `try catch finally` pattern only to the entrance method of the current excecution context, i.e. `execute()` method for batch classes.
 
 ```java
-public class MyAccountController {
+public class WELSampleController {
     // WELLogger.ILogger and WELLogger.LoggerInterface can be used interchangeably
-    static WELLogger.ILogger logger = WELLogger.get('acct:MyAccountController');
+    static WELLogger.ILogger logger = WELLogger.get('sample:WELSampleController');
     
     class Response {
         Object data { get; set; }
@@ -109,23 +114,28 @@ public class MyAccountController {
     }
     
     @RemoteAction
-    public Response doSomeWork(String param1, String param2) {
-        logger.debug('[M:E] doSomeWork()');   // log for method enter
+    public static Response doSomeWork(String param1, Decimal param2) {
+        logger.debug('[M:E] doSomeWork()'); // log for method enter
         logger.debug('[P:param1]', param1); // log for parameter
         logger.debug('[P:param2]', param2); // log for parameter
-        
+
         Response res = new Response();
         try {
-            logger.debug('do some work');
-            logger.debug('do some work');
-        } catch (Exception ex) {
-            logger.debug(LoggingLevel.Error, ex);
+            logger.debug('doing lots of uninteresting work');
+            logger.debug('doing some work');
+            logger.debug('doing lots of uninteresting work');
+            logger.debug('doing some work');
+            logger.debug('a list of objects', new List<Object>());
+        } catch (DmlException ex) {
+            logger.get('ex').debug(LoggingLevel.ERROR, ex); // use ex as modifier
+        } catch(Exception ex) {
+            logger.get('ex').debug(LoggingLevel.ERROR, ex); // use ex as modifier
         } finally {
-            WELLogger.save();          // 1. output logs to database
-            res.logs = WELLogger.logs; // 2. output logs to browser
+            WELLogger.save();          // output to database
+            res.logs = WELLogger.logs; // output to browser
         }
-        
-        logger.debug('[M:X] doSomeWork()');   // log for method exit
+
+        logger.debug('[M:X] doSomeWork()'); // log for method exit
         return res;
     }
 }

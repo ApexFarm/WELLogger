@@ -9,7 +9,9 @@ module.exports = function(logs) {
       var nsp = debug(log.nsp);
       if (log.trc) {
         if (typeof log.trc === 'string') {
-          nsp(log.tst, '%s\n%s', log.msg, log.trc);
+          nsp(log.tst, '%s "%s"', log.msg, log.trc);
+        } else if (typeof log.trc != 'object') {
+          nsp(log.tst, '%s %o', log.msg, log.trc);
         } else {
           nsp(log.tst, '%s\n%o', log.msg, log.trc);
         }

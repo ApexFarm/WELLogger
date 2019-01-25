@@ -1,36 +1,57 @@
 @IsTest
 private without sharing class WELLoggerTest {
     @IsTest
-    static void testLoggerSettingDefault() {
-        List<WELLogSetting__mdt> loggerSettings = [
-            SELECT
-                MasterLabel,
-                Enabled__c,
-                Logging_Level_Database__c,
-                Logging_Level_Debug__c,
-                Logging_Level_API__c
-            FROM WELLogSetting__mdt
-            WHERE MasterLabel = 'default'
-        ];
+    static void testLoggingPerformance() {
+        WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
+        setting.enabled = true;
+        setting.loggingLevelDatabase = LoggingLevel.DEBUG;
+        setting.loggingLevelDebug = LoggingLevel.DEBUG;
+        setting.loggingLevelAPI = LoggingLevel.DEBUG;
+        WELLogger.LOGGER_SETTING_CACHE.put('test', setting);
 
-        if (!loggerSettings.isEmpty()) {
-            WELLogSetting__mdt loggerSetting = loggerSettings[0];
-            WELLogger.LoggerSetting setting = ((WELLogger.Logger)WELLOGGER.get('test')).setting;
-            System.assertEquals(loggerSetting.Logging_Level_Database__c, setting.loggingLevelDatabase.name());
-            System.assertEquals(loggerSetting.Logging_Level_Debug__c, setting.loggingLevelDebug.name());
-            System.assertEquals(loggerSetting.Logging_Level_API__c, setting.loggingLevelAPI.name());
-            System.assertEquals(loggerSetting.Enabled__c, setting.enabled);
-        } else {
-            WELLogger.LoggerSetting setting = ((WELLogger.Logger)WELLOGGER.get('test')).setting;
-            System.assertEquals(LoggingLevel.NONE, setting.loggingLevelDatabase);
-            System.assertEquals(LoggingLevel.DEBUG, setting.loggingLevelDebug);
-            System.assertEquals(LoggingLevel.NONE, setting.loggingLevelAPI);
-            System.assertEquals(true, setting.enabled);
+        try {
+            Map<String, String> dict;
+            dict.get('key');
+        } catch (Exception ex) {
+            WELLogger.ILogger logger;
+            for (Integer i = 0; i < 100; i++) {
+                logger = WELLogger.get('test:' + i);
+                logger.debug(LoggingLevel.ERROR, 'test performance', ex);
+            }
+        } finally {
+            WELLogger.save();
         }
+
+        System.debug(Limits.getCpuTime());
+        List<WELLog__c> dbLogs = [
+            SELECT Id
+            FROM WELLog__c
+        ];
+        System.assertEquals(100, dbLogs.size());
+        System.assertEquals(100, WELLogger.logs.size());
     }
 
     @IsTest
-    static void testLogLevel() {
+    static void testLoggerNamespace() {
+        WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
+        setting.enabled = true;
+        setting.loggingLevelDatabase = LoggingLevel.DEBUG;
+        setting.loggingLevelDebug = LoggingLevel.DEBUG;
+        setting.loggingLevelAPI = LoggingLevel.DEBUG;
+        WELLogger.LOGGER_SETTING_CACHE.put('test', setting);
+
+        WELLogger.ILogger logger = WELLogger.get('test');
+        System.assertEquals('test', ((WELLogger.Logger)logger).namespace);
+        logger = logger.get('test');
+        System.assertEquals('test:test', ((WELLogger.Logger)logger).namespace);
+        logger.get('test');
+        logger = logger.get('test');
+        logger.get('test');
+        System.assertEquals('test:test:test', ((WELLogger.Logger)logger).namespace);
+    }
+
+    @IsTest
+    static void testLoggingLevelToString() {
         WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
         setting.enabled = true;
         setting.loggingLevelDatabase = LoggingLevel.FINEST;
@@ -67,7 +88,36 @@ private without sharing class WELLoggerTest {
     }
 
     @IsTest
-    static void testLogNullException() {
+    static void testLoggingLevelDefault() {
+        List<WELLogSetting__mdt> loggerSettings = [
+            SELECT
+                MasterLabel,
+                Enabled__c,
+                Logging_Level_Database__c,
+                Logging_Level_Debug__c,
+                Logging_Level_API__c
+            FROM WELLogSetting__mdt
+            WHERE MasterLabel = 'default'
+        ];
+
+        if (!loggerSettings.isEmpty()) {
+            WELLogSetting__mdt loggerSetting = loggerSettings[0];
+            WELLogger.LoggerSetting setting = ((WELLogger.Logger)WELLOGGER.get('test')).setting;
+            System.assertEquals(loggerSetting.Logging_Level_Database__c, setting.loggingLevelDatabase.name());
+            System.assertEquals(loggerSetting.Logging_Level_Debug__c, setting.loggingLevelDebug.name());
+            System.assertEquals(loggerSetting.Logging_Level_API__c, setting.loggingLevelAPI.name());
+            System.assertEquals(loggerSetting.Enabled__c, setting.enabled);
+        } else {
+            WELLogger.LoggerSetting setting = ((WELLogger.Logger)WELLOGGER.get('test')).setting;
+            System.assertEquals(LoggingLevel.NONE, setting.loggingLevelDatabase);
+            System.assertEquals(LoggingLevel.DEBUG, setting.loggingLevelDebug);
+            System.assertEquals(LoggingLevel.NONE, setting.loggingLevelAPI);
+            System.assertEquals(true, setting.enabled);
+        }
+    }
+
+    @IsTest
+    static void testLoggingNullException() {
         WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
         setting.enabled = true;
         setting.loggingLevelDatabase = LoggingLevel.ERROR;
@@ -82,17 +132,75 @@ private without sharing class WELLoggerTest {
             WELLogger.get('test').debug(LoggingLevel.ERROR, ex);
             WELLogger.save();
         }
-        List<WELLogger.Log> logs = WELLogger.logs;
+
         List<WELLog__c> dbLogs = [
             SELECT Id
             FROM WELLog__c
         ];
+        System.assertEquals(1, WELLogger.logs.size());
         System.assertEquals(1, dbLogs.size());
-        System.assertEquals(1, logs.size());
     }
 
     @IsTest
-    static void testLogModuleForError() {
+    static void testLoggingOutputNONE() {
+        WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
+        setting.enabled = true;
+        setting.loggingLevelDatabase = LoggingLevel.NONE;
+        setting.loggingLevelDebug = LoggingLevel.NONE;
+        setting.loggingLevelAPI = LoggingLevel.NONE;
+        WELLogger.LOGGER_SETTING_CACHE.put('test', setting);
+
+        WELLogger.ILogger a = WELLogger.get('test:a');
+        a.debug('******');
+        a.debug(LoggingLevel.ERROR, '******');
+        a.debug(LoggingLevel.NONE, '******');
+        WELLogger.save();
+
+        WELLogger.ILogger b = WELLogger.get('test:b');
+        b.debug(LoggingLevel.ERROR, '******');
+        b.debug(LoggingLevel.NONE, '******');
+
+        {
+            List<WELLog__c> dbLogs = [
+                SELECT Id
+                FROM WELLog__c
+            ];
+            System.assertEquals(0, WELLogger.logs.size());
+            System.assertEquals(0, dbLogs.size());
+        }
+    }
+
+    @IsTest
+    static void testLoggingOutputDisalbed() {
+        WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
+        setting.enabled = false;
+        setting.loggingLevelDatabase = LoggingLevel.FINEST;
+        setting.loggingLevelDebug = LoggingLevel.FINEST;
+        setting.loggingLevelAPI = LoggingLevel.FINEST;
+        WELLogger.LOGGER_SETTING_CACHE.put('test', setting);
+
+        WELLogger.ILogger a = WELLogger.get('test:a');
+        a.debug('******');
+        a.debug(LoggingLevel.ERROR, '******');
+        a.debug(LoggingLevel.NONE, '******');
+        WELLogger.save();
+
+        WELLogger.ILogger b = WELLogger.get('test:b');
+        b.debug(LoggingLevel.ERROR, '******');
+        b.debug(LoggingLevel.NONE, '******');
+
+        {
+            List<WELLog__c> dbLogs = [
+                SELECT Id
+                FROM WELLog__c
+            ];
+            System.assertEquals(0, WELLogger.logs.size());
+            System.assertEquals(0, dbLogs.size());
+        }
+    }
+
+    @IsTest
+    static void testLoggingOutputDatabaseAndAPI() {
         WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
         setting.enabled = true;
         setting.loggingLevelDatabase = LoggingLevel.ERROR;
@@ -113,83 +221,22 @@ private without sharing class WELLoggerTest {
         b.debug(LoggingLevel.ERROR, '******');
 
         {
-            List<WELLogger.Log> logs = WELLogger.logs;
-            System.assertEquals(6, logs.size());
             List<WELLog__c> dbLogs = [
                 SELECT Id
                 FROM WELLog__c
             ];
+            System.assertEquals(6, WELLogger.logs.size());
             System.assertEquals(2, dbLogs.size());
         }
 
         WELLogger.save();
         {
-            List<WELLogger.Log> logs = WELLogger.logs;
-            System.assertEquals(6, logs.size());
             List<WELLog__c> dbLogs = [
                 SELECT Id
                 FROM WELLog__c
             ];
             System.assertEquals(4, dbLogs.size());
-        }
-    }
-
-    @IsTest
-    static void testLogModuleForNONE() {
-        WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
-        setting.enabled = true;
-        setting.loggingLevelDatabase = LoggingLevel.NONE;
-        setting.loggingLevelDebug = LoggingLevel.NONE;
-        setting.loggingLevelAPI = LoggingLevel.NONE;
-        WELLogger.LOGGER_SETTING_CACHE.put('test', setting);
-
-        WELLogger.ILogger a = WELLogger.get('test:a');
-        a.debug('******');
-        a.debug('******');
-
-        a.debug(LoggingLevel.ERROR, '******');
-        a.debug(LoggingLevel.ERROR, '******');
-        WELLogger.save();
-
-        WELLogger.ILogger b = WELLogger.get('test:b');
-        b.debug(LoggingLevel.ERROR, '******');
-        b.debug(LoggingLevel.ERROR, '******');
-
-        {
-            List<WELLogger.Log> logs = WELLogger.logs;
-            System.assertEquals(0, logs.size());
-            List<WELLog__c> dbLogs = [
-                SELECT Id
-                FROM WELLog__c
-            ];
-            System.assertEquals(0, dbLogs.size());
-        }
-    }
-
-    class CustomLogger extends WELLogger.Logger {
-        protected override void internalDebug(LoggingLevel logLvl, Object message, Object trace) {
-            // test add*** methods
-            WELLogger.Log log = new WELLogger.Log(logLvl, this.namespace, message, trace);
-            if (this.setting.loggingLevelDatabase == LoggingLevel.NONE) {
-                this.addDBLog(log);
-            }
-            if (this.setting.loggingLevelAPI == LoggingLevel.NONE) {
-                this.addAPILog(log);
-            }
-
-            // test addALL*** methods
-            List<WELLogger.Log> logs = new List<WELLogger.Log>();
-            logs.add(new WELLogger.Log(logLvl, this.namespace + ':all', message, trace));
-            logs.add(new WELLogger.Log(logLvl, this.namespace + ':all', message, trace));
-
-            if (this.setting.loggingLevelDatabase == LoggingLevel.NONE) {
-                this.addAllDBLogs(logs);
-            }
-            if (this.setting.loggingLevelAPI == LoggingLevel.NONE) {
-                this.addAllAPILogs(logs);
-            }
-
-            System.debug(log);
+            System.assertEquals(6, WELLogger.logs.size());
         }
     }
 
@@ -205,49 +252,39 @@ private without sharing class WELLoggerTest {
         WELLogger.ILogger c = WELLogger.get('test:c', CustomLogger.class);
         c.debug('******');
         WELLogger.save();
-        System.assertEquals(3, WELLogger.logs.size());
+
         List<WELLog__c> dbLogs = [
             SELECT Id
             FROM WELLog__c
         ];
         System.assertEquals(3, dbLogs.size());
+        System.assertEquals(3, WELLogger.logs.size());
     }
 
-    @IsTest
-    static void TestSave() {
-        WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
-        setting.enabled = true;
-        setting.loggingLevelDatabase = LoggingLevel.DEBUG;
-        setting.loggingLevelDebug = LoggingLevel.DEBUG;
-        setting.loggingLevelAPI = LoggingLevel.DEBUG;
-        WELLogger.LOGGER_SETTING_CACHE.put('test', setting);
+    class CustomLogger extends WELLogger.Logger {
+        protected override void internalDebug(LoggingLevel logLvl, Object message, Object trace) {
+            // coverage for add*** methods
+            WELLogger.Log log = new WELLogger.Log(logLvl, this.namespace, message, trace);
+            if (this.setting.loggingLevelDatabase == LoggingLevel.NONE) {
+                this.addDBLog(log);
+            }
+            if (this.setting.loggingLevelAPI == LoggingLevel.NONE) {
+                this.addAPILog(log);
+            }
 
-        WELLogger.ILogger a = WELLogger.get('test:a');
-        a.debug('******');
-        a.debug('******');
-        WELLogger.save();
+            // coverage for addALL*** methods
+            List<WELLogger.Log> logs = new List<WELLogger.Log>();
+            logs.add(new WELLogger.Log(logLvl, this.namespace + ':all', message, trace));
+            logs.add(new WELLogger.Log(logLvl, this.namespace + ':all', message, trace));
 
-        {
-            List<WELLog__c> dbLogs = [
-                SELECT Id
-                FROM WELLog__c
-            ];
-            System.assertEquals(2, dbLogs.size());
-        }
+            if (this.setting.loggingLevelDatabase == LoggingLevel.NONE) {
+                this.addAllDBLogs(logs);
+            }
+            if (this.setting.loggingLevelAPI == LoggingLevel.NONE) {
+                this.addAllAPILogs(logs);
+            }
 
-        a.debug('******');
-        a.debug('******');
-        WELLogger.save();
-        WELLogger.save();
-        a.debug('******');
-        a.debug('******');
-
-        {
-            List<WELLog__c> dbLogs = [
-                SELECT Id
-                FROM WELLog__c
-            ];
-            System.assertEquals(4, dbLogs.size());
+            System.debug(log);
         }
     }
 }

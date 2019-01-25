@@ -1,7 +1,5 @@
 public with sharing class WELSampleController {
     private static WELLogger.ILogger logger = WELLogger.get('sample:WELSampleController');
-    private static WELLogger.ILogger a = WELLogger.get('worker:a');
-    private static WELLogger.ILogger b = WELLogger.get('worker:b');
 
     public class Response {
         @AuraEnabled
@@ -10,19 +8,18 @@ public with sharing class WELSampleController {
 
     @RemoteAction
     @AuraEnabled
-    public static Response doSomeWork(String param1, String param2) {
-        logger.debug('[M:E] doSomeWork');
-        logger.debug('[P:param1]', param1);
-        logger.debug('[P:param2]', param2);
+    public static Response doSomeWork(String param1, Decimal param2) {
+        logger.debug('[M:E] doSomeWork()'); // log for method enter
+        logger.debug('[P:param1]', param1); // log for parameter
+        logger.debug('[P:param2]', param2); // log for parameter
 
         Response res = new Response();
         try {
-            WELLogger.debug('doing main work');
-            a.debug('doing lots of uninteresting work');
-            b.debug('doing some work');
-            a.debug('doing lots of uninteresting work');
-            b.debug('doing some work');
-            WELLogger.debug('a list of objects', [
+            logger.debug('doing lots of uninteresting work');
+            logger.debug('doing some work');
+            logger.debug('doing lots of uninteresting work');
+            logger.debug('doing some work');
+            logger.debug('a list of objects', [
                 SELECT
                     MasterLabel,
                     Enabled__c,
@@ -33,15 +30,15 @@ public with sharing class WELSampleController {
             ]);
             invokeNullReferenceException();
         } catch (DmlException ex) {
-            WELLogger.debug(LoggingLevel.ERROR, ex);
+            logger.get('ex').debug(LoggingLevel.ERROR, ex); // use ex as modifier
         } catch(Exception ex) {
-            WELLogger.debug(LoggingLevel.ERROR, ex);
+            logger.get('ex').debug(LoggingLevel.ERROR, ex); // use ex as modifier
         } finally {
-            res.logs = WELLogger.logs;
-            WELLogger.save();
+            WELLogger.save();          // output to database
+            res.logs = WELLogger.logs; // output to browser
         }
 
-        logger.debug('[M:X] doSomeWork');
+        logger.debug('[M:X] doSomeWork()'); // log for method exit
         return res;
     }
 
