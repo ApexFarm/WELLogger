@@ -1,3 +1,4 @@
+*.cls linguist-language=Apex
 dist/* linguist-generated
 src-force/logger/staticresources/* linguist-generated
 src-static/src/debug/* linguist-vendored

@@ -11,6 +11,8 @@ In addition, it also has the following features:
 3. Categorize logs by namespaces, i.e. `module_name:feature_name:modifier`.
 4. Control logging levels for database, debug log, and web outputs by namespaces.
 
+Below is a web browser output example. `[sample:controller]` is the namespace of the log. It is used to provide richer context of the log message.
+
 <img width="680" src="doc/console.png" alt="console.png"/>
 
 ## Installation
