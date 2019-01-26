@@ -54,5 +54,5 @@ TestsResultsCache.xml
 .vim-force.com
 .sfdx
 .vscode
-src/main
+src-force/main
 node_modules

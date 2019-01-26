@@ -28,12 +28,12 @@ This is the most common way if you are not familiar with `sfdx-cli`. Upload all 
 
 #### 2. SFDX-CLI or VS Code
 
-If you are familiar with `sfdx-cli`, you can upload all source codes under directory `src/logger` to your organization via sfdx-cli or VS Code. Because the library is developed with VS Code [Salesforce CLI Integration](https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode-core) extension.
+If you are familiar with `sfdx-cli`, you can upload all source codes under directory `src-force/logger` to your organization via sfdx-cli or VS Code. Because the library is developed with VS Code [Salesforce CLI Integration](https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode-core) extension.
 
 1. Download the source code
 2. Open VS Code with sfdx-cli right configured
 3. Issue command `SFDX: Authorize an Org` for your organization
-4. Right click the directory `src/logger` and issue command `SFDX: Deploy Source to Org`
+4. Right click the directory `src-force/logger` and issue command `SFDX: Deploy Source to Org`
 
 ## Usage
 
@@ -146,7 +146,7 @@ public class WELSampleController {
 
 #### Browser Output 
 
-In the above example we can also see a log output to the remote action response. We can print these logs in the developer console with wellogger.js helper. To view the logs in Chrome developer console, select `Verbose` as the logging level. Source codes for both remote action and lightning component are under the directory `src/sample`.
+In the above example we can also see a log output to the remote action response. We can print these logs in the developer console with wellogger.js helper. To view the logs in Chrome developer console, select `Verbose` as the logging level. Source codes for both remote action and lightning component are under the directory `src-force/sample`.
 
 ```html
 <apex:page name="WELSample" controller="WELSampleController">

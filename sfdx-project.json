@@ -1,7 +1,7 @@
 {
   "packageDirectories": [
     {
-      "path": "src",
+      "path": "src-force",
       "default": true
     }
   ],

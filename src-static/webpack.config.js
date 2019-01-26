@@ -7,7 +7,7 @@ module.exports = {
     library: 'wellogger',
     filename: 'wellogger.js',
     libraryTarget: 'window',
-    path: path.resolve(__dirname, '../src/logger/staticresources/WELLogger')
+    path: path.resolve(__dirname, '../src-force/logger/staticresources/WELLogger')
   },
   devtool: 'sourcemap'
 };
