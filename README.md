@@ -106,7 +106,7 @@ Here is the best approach for how to use `WELLogger.save()` to save logs into th
 ```java
 public class WELSampleController {
     // WELLogger.ILogger and WELLogger.LoggerInterface can be used interchangeably
-    static WELLogger.ILogger logger = WELLogger.get('sample:WELSampleController');
+    static WELLogger.ILogger logger = WELLogger.get('sample:controller');
     
     class Response {
         Object data { get; set; }
@@ -121,10 +121,10 @@ public class WELSampleController {
 
         Response res = new Response();
         try {
-            logger.debug('doing lots of uninteresting work');
-            logger.debug('doing some work');
-            logger.debug('doing lots of uninteresting work');
-            logger.debug('doing some work');
+            logger.debug(LoggingLevel.INFO, 'doing lots of uninteresting work');
+            logger.debug(LoggingLevel.WARN, 'doing some work');
+            logger.debug(LoggingLevel.INFO, 'doing lots of uninteresting work');
+            logger.debug(LoggingLevel.WARN, 'doing some work');
             logger.debug('a list of objects', new List<Object>());
         } catch (DmlException ex) {
             logger.get('ex').debug(LoggingLevel.ERROR, ex); // use ex as modifier

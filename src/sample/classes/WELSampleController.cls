@@ -1,5 +1,5 @@
 public with sharing class WELSampleController {
-    private static WELLogger.ILogger logger = WELLogger.get('sample:WELSampleController');
+    private static WELLogger.ILogger logger = WELLogger.get('sample:controller');
 
     public class Response {
         @AuraEnabled
@@ -15,10 +15,10 @@ public with sharing class WELSampleController {
 
         Response res = new Response();
         try {
-            logger.debug('doing lots of uninteresting work');
-            logger.debug('doing some work');
-            logger.debug('doing lots of uninteresting work');
-            logger.debug('doing some work');
+            logger.debug(LoggingLevel.INFO, 'doing lots of uninteresting work');
+            logger.debug(LoggingLevel.WARN, 'doing some work');
+            logger.debug(LoggingLevel.INFO, 'doing lots of uninteresting work');
+            logger.debug(LoggingLevel.WARN, 'doing some work');
             logger.debug('a list of objects', [
                 SELECT
                     MasterLabel,
