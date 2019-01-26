@@ -1,5 +1,6 @@
 # Well Logger
-WELLogger is a thin wrapper around `System.debug`. It aims to pretty format objects for classes such as Exception, and HttpResponse etc automatically.
+
+WELLogger is a thin wrapper around Salesforce Apex `System.debug`. It aims to pretty format objects for classes such as Exception, and HttpResponse etc automatically.
 ```java
 System.debug(ex.getMessage() + ': ' + ex.getStackTrackMessage()); // no more this
 WELLogger.debug(ex); // just do this
@@ -9,6 +10,8 @@ In addition, it also has the following features:
 2. Output logs to `WELLogger.logs` array, which can be further exposed to external APIs.
 3. Categorize logs by namespaces, i.e. `module_name:feature_name:modifier`.
 4. Control logging levels for database, debug log, and web outputs by namespaces.
+
+<img width="680" src="doc/console.png" alt="console.png"/>
 
 ## Installation
 
@@ -143,7 +146,7 @@ public class WELSampleController {
 
 #### Browser Output 
 
-In the above example we can also see a log output to the remote action response. We can print these logs in the developer console with wellogger.js helper.
+In the above example we can also see a log output to the remote action response. We can print these logs in the developer console with wellogger.js helper. To view the logs in Chrome developer console, select `Verbose` as the logging level. Source codes for both remote action and lightning component are under the directory `src/sample`.
 
 ```html
 <apex:page name="WELSample" controller="WELSampleController">
@@ -161,10 +164,6 @@ In the above example we can also see a log output to the remote action response.
   </script>
 </apex:page>
 ```
-
-To view the logs in Chrome developer console, select `Verbose` as the logging level. Source codes for both remote action and lightning component are in the directory `src/sample`.
-
-![console.png](doc/console.png)
 
 ## License
 MIT License
