@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "baseUrl": ".",
+        "paths": {
+            "c/wel-log-event-footbar": [
+                "welLogEventFootbar/welLogEventFootbar.js"
+            ],
+            "c/wel-log-event-item": [
+                "welLogEventItem/welLogEventItem.js"
+            ],
+            "c/wel-log-event-list": [
+                "welLogEventList/welLogEventList.js"
+            ],
+            "c/wel-log-event-page": [
+                "welLogEventPage/welLogEventPage.js"
+            ],
+            "c/wel-logger": [
+                "../staticresources/WELLogger/WELLogger.js"
+            ]
+        }
+    },
+    "include": [
+        "**/*",
+        "../../../.sfdx/typings/lwc/**/*.d.ts",
+        "../../../../.sfdx/typings/lwc/**/*.d.ts"
+    ]
+}

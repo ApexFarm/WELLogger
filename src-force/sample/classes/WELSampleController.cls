@@ -23,9 +23,8 @@ public with sharing class WELSampleController {
                 SELECT
                     MasterLabel,
                     Enabled__c,
-                    Logging_Level_Database__c,
-                    Logging_Level_Debug__c,
-                    Logging_Level_API__c
+                    Logging_Level_Event__c,
+                    Logging_Level_Debug__c
                 FROM WELLogSetting__mdt
             ]);
             invokeNullReferenceException();

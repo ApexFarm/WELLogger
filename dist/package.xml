@@ -7,8 +7,7 @@
     </types>
     <types>
         <members>WELLogSetting__mdt.Enabled__c</members>
-        <members>WELLogSetting__mdt.Logging_Level_API__c</members>
-        <members>WELLogSetting__mdt.Logging_Level_Database__c</members>
+        <members>WELLogSetting__mdt.Logging_Level_Event__c</members>
         <members>WELLogSetting__mdt.Logging_Level_Debug__c</members>
         <members>WELLog__c.Level__c</members>
         <members>WELLog__c.Message__c</members>

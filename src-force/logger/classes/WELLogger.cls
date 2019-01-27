@@ -3,6 +3,7 @@ public with sharing class WELLogger {
     @TestVisible
     private static final Map<String, LoggerSetting> LOGGER_SETTING_CACHE;
     private static final Map<String, ILogger> LOGGER_CACHE;
+    @TestVisible
     private static final List<Log> LOG_QUEUE;
 
     private static final String LOGGER_NAME_DEFAULT = 'default';

@@ -16,8 +16,15 @@
         <name>CustomMetadata</name>
     </types>
     <types>
+        <members>welLogEventPage</members>
+        <members>welLogEventList</members>
+        <members>welLogEventItem</members>
+        <members>welLogEventFootbar</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
         <members>WELLogger</members>
         <name>StaticResource</name>
     </types>
-    <version>44.0</version>
+    <version>45.0</version>
 </Package>
