@@ -121,7 +121,8 @@ public with sharing class WELLogger {
                 logs.add(new WELLog__e(
                     LVL__c = log.lvl,
                     NSP__c = log.nsp,
-                    MSG__c = log.msg + '\r\n' + String.valueOf(log.trc)
+                    MSG__c = log.msg,
+                    TRC__c = String.valueOf(log.trc)
                 ));
             }
             Eventbus.publish(logs);
@@ -236,7 +237,16 @@ public with sharing class WELLogger {
 
         public Log(LoggingLevel logLvl, String namespace, Object message, Object trace) {
             nsp = namespace;
-            format(message, trace);
+            msg = String.valueOf(message);
+            if (message instanceOf Exception) {
+                Exception ex = (Exception)message;
+                trc = new Map<String, String> {
+                    'TypeName' => ex.getTypeName(),
+                    'Message' => ex.getMessage(),
+                    'StackTrace' => ex.getStackTraceString()
+                };
+            }
+            // format(message, trace);
 
             switch on logLvl {
                 when DEBUG {
