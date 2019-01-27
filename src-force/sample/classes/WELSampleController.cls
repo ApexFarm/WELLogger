@@ -34,8 +34,7 @@ public with sharing class WELSampleController {
         } catch(Exception ex) {
             logger.get('ex').debug(LoggingLevel.ERROR, ex); // use ex as modifier
         } finally {
-            WELLogger.save();          // output to database
-            res.logs = WELLogger.logs; // output to browser
+            WELLogger.save(); // publish to platform event
         }
 
         logger.debug('[M:X] doSomeWork()'); // log for method exit
@@ -45,18 +44,5 @@ public with sharing class WELSampleController {
     static void invokeNullReferenceException() {
         String s;
         s.toLowerCase();
-    }
-
-    static void invokeDMLException() {
-        WELLog__c log = new WELLog__c(
-            Namespace__c =
-                'aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee' +
-                'aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee' +
-                'aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee' +
-                'aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee' +
-                'aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee' +
-                '123456'
-        );
-        insert log;
     }
 }

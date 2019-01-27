@@ -20,7 +20,7 @@ module.exports = function(logs) {
                     nsp(log.lvl, log.tst, '%s %o', log.msg, log.trc);
                 }
             } else {
-                nsp(log.lvl, log.tst, log.msg);
+                nsp(log.lvl, log.tst, log.msg.replace(/\n/g, '\n   '));
             }
         });
         debug.log('===========END===========');

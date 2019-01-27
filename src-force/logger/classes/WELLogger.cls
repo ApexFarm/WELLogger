@@ -1,25 +1,20 @@
 public with sharing class WELLogger {
-    private static final Map<String, LoggingLevel> SYSTEM_LOGGING_LEVELS;
+    private static final Map<String, LoggingLevel> LOGGING_LEVEL_CACHE;
     @TestVisible
     private static final Map<String, LoggerSetting> LOGGER_SETTING_CACHE;
     private static final Map<String, ILogger> LOGGER_CACHE;
-    private static final List<Log> LOG_CACHE_DATABASE;
-    private static final List<Log> LOG_CACHE_API;
+    private static final List<Log> LOG_QUEUE;
 
     private static final String LOGGER_NAME_DEFAULT = 'default';
     private static final String LOGGER_NAME_MAIN = 'main';
     private static final LoggerSetting DEFAULT_LOGGER_SETTING;
     private static final ILogger MAIN_LOGGER;
 
-    private static Integer savedLogIndex;
-
     static {
-        SYSTEM_LOGGING_LEVELS = new Map<String, LoggingLevel>();
+        LOGGING_LEVEL_CACHE = new Map<String, LoggingLevel>();
         LOGGER_SETTING_CACHE = new Map<String, LoggerSetting>();
         LOGGER_CACHE = new Map<String, Logger>();
-        LOG_CACHE_DATABASE = new List<Log>();
-        LOG_CACHE_API = new List<Log>();
-        savedLogIndex = 0;
+        LOG_QUEUE = new List<Log>();
 
         loadLoggingLevelMap();
         loadLoggerSettings();
@@ -28,9 +23,8 @@ public with sharing class WELLogger {
             DEFAULT_LOGGER_SETTING = LOGGER_SETTING_CACHE.get(LOGGER_NAME_DEFAULT);
         } else {
             DEFAULT_LOGGER_SETTING = new LoggerSetting();
-            DEFAULT_LOGGER_SETTING.loggingLevelDatabase = LoggingLevel.NONE;
+            DEFAULT_LOGGER_SETTING.loggingLevelEvent = LoggingLevel.NONE;
             DEFAULT_LOGGER_SETTING.loggingLevelDebug = LoggingLevel.DEBUG;
-            DEFAULT_LOGGER_SETTING.loggingLevelAPI = LoggingLevel.NONE;
             DEFAULT_LOGGER_SETTING.enabled = true;
         }
 
@@ -43,7 +37,7 @@ public with sharing class WELLogger {
 
     private static void loadLoggingLevelMap() {
         for (LoggingLevel enumValue : LoggingLevel.values()) {
-            SYSTEM_LOGGING_LEVELS.put(String.valueOf(enumValue).toUpperCase(), enumValue);
+            LOGGING_LEVEL_CACHE.put(String.valueOf(enumValue).toUpperCase(), enumValue);
         }
     }
 
@@ -52,9 +46,8 @@ public with sharing class WELLogger {
             SELECT
                 MasterLabel,
                 Enabled__c,
-                Logging_Level_Database__c,
-                Logging_Level_Debug__c,
-                Logging_Level_API__c
+                Logging_Level_Event__c,
+                Logging_Level_Debug__c
             FROM WELLogSetting__mdt
         ]) {
             LOGGER_SETTING_CACHE.put(setting.MasterLabel, new LoggerSetting(setting));
@@ -120,34 +113,24 @@ public with sharing class WELLogger {
         MAIN_LOGGER.debug(logLvl, message, trace);
     }
 
-    public static List<Log> logs {
-        get {
-            return LOG_CACHE_API;
-        }
-    }
-
     public static void save() {
-        if (LOG_CACHE_DATABASE.SIZE() > savedLogIndex) {
-            List<WELLog__c> logs = new List<WELLog__c>();
-            Log log;
-            for (Integer i = savedLogIndex; i < LOG_CACHE_DATABASE.SIZE(); ++i) {
-                log = LOG_CACHE_DATABASE[i];
-                logs.add(new WELLog__c(
-                    Level__c = log.lvl,
-                    Namespace__c = log.nsp,
-                    Timestamp__c = log.tst,
-                    Message__c = log.msg + '\r\n' + String.valueOf(log.trc)
+        if (!LOG_QUEUE.isEmpty()) {
+            List<WELLog__e> logs = new List<WELLog__e>();
+            for (Log log : LOG_QUEUE) {
+                logs.add(new WELLog__e(
+                    LVL__c = log.lvl,
+                    NSP__c = log.nsp,
+                    MSG__c = log.msg + '\r\n' + String.valueOf(log.trc)
                 ));
             }
-            DATABASE.insert(logs);
-            savedLogIndex = LOG_CACHE_DATABASE.size();
+            Eventbus.publish(logs);
+            LOG_QUEUE.clear();
         }
     }
 
     public class LoggerSetting {
-        public LoggingLevel loggingLevelDatabase { get; set; }
+        public LoggingLevel loggingLevelEvent { get; set; }
         public LoggingLevel loggingLevelDebug { get; set; }
-        public LoggingLevel loggingLevelAPI { get; set; }
         public Boolean enabled { get; set; }
 
         public LoggerSetting() {
@@ -157,13 +140,11 @@ public with sharing class WELLogger {
         public LoggerSetting(WELLogSetting__mdt setting) {
             enabled = setting.Enabled__c;
             if (enabled) {
-                loggingLevelDatabase = SYSTEM_LOGGING_LEVELS.get(setting.Logging_Level_Database__c);
-                loggingLevelDebug = SYSTEM_LOGGING_LEVELS.get(setting.Logging_Level_Debug__c);
-                loggingLevelAPI = SYSTEM_LOGGING_LEVELS.get(setting.Logging_Level_API__c);
+                loggingLevelEvent = LOGGING_LEVEL_CACHE.get(setting.Logging_Level_Event__c);
+                loggingLevelDebug = LOGGING_LEVEL_CACHE.get(setting.Logging_Level_Debug__c);
             } else {
-                loggingLevelDatabase = LoggingLevel.NONE;
+                loggingLevelEvent = LoggingLevel.NONE;
                 loggingLevelDebug = LoggingLevel.NONE;
-                loggingLevelAPI = LoggingLevel.NONE;
             }
         }
     }
@@ -214,19 +195,13 @@ public with sharing class WELLogger {
 
         protected virtual void internalDebug(LoggingLevel logLvl, Object message, Object trace) {
             if (!this.setting.enabled) {
-                System.debug(logLvl, message + '\r\n' + trace);
                 return;
             }
 
             Log log = new Log(logLvl, this.namespace, message, trace);
-            if (this.setting.loggingLevelDatabase != LoggingLevel.NONE
-                && this.setting.loggingLevelDatabase.ordinal() <= logLvl.ordinal()) {
-                LOG_CACHE_DATABASE.add(log);
-            }
-
-            if (this.setting.loggingLevelAPI != LoggingLevel.NONE
-                && this.setting.loggingLevelAPI.ordinal() <= logLvl.ordinal()) {
-                LOG_CACHE_API.add(log);
+            if (this.setting.loggingLevelEvent != LoggingLevel.NONE
+                && this.setting.loggingLevelEvent.ordinal() <= logLvl.ordinal()) {
+                LOG_QUEUE.add(log);
             }
 
             if (this.setting.loggingLevelDebug != LoggingLevel.NONE
@@ -235,27 +210,16 @@ public with sharing class WELLogger {
             }
         }
 
-        protected void addDBLog(Log log) {
-            LOG_CACHE_DATABASE.add(log);
+        protected void addLog(Log log) {
+            LOG_QUEUE.add(log);
         }
 
-        protected void addAllDBLogs(List<Log> logs) {
-            LOG_CACHE_DATABASE.addAll(logs);
-        }
-
-        protected void addAPILog(Log log) {
-            LOG_CACHE_API.add(log);
-        }
-
-        protected void addAllAPILogs(List<Log> logs) {
-            LOG_CACHE_API.addAll(logs);
+        protected void addAllLogs(List<Log> logs) {
+            LOG_QUEUE.addAll(logs);
         }
     }
 
     public virtual class Log {
-        @TestVisible
-        @AuraEnabled
-        protected Long tst { get; private set; }
         @TestVisible
         @AuraEnabled
         protected String nsp { get; private set; }
@@ -270,7 +234,6 @@ public with sharing class WELLogger {
         protected Object trc { get; private set; }
 
         public Log(LoggingLevel logLvl, String namespace, Object message, Object trace) {
-            tst = Datetime.now().getTime();
             nsp = namespace;
             format(message, trace);
 
