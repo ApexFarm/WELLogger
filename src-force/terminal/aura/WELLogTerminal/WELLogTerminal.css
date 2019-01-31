@@ -1,8 +1,0 @@
-.THIS.container {
-    height: calc(100% + 24px);
-    width: calc(100% + 24px);
-    position: absolute;
-    background-color: #000000;
-    top: -12px;
-    left: -12px;
-}

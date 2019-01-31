@@ -1,0 +1,10 @@
+<template>
+    <ul>
+        <template for:each={logEvents} for:item="log">
+            <li key={log.data.event.replayId}>
+                <c-wel-log-event-item item={log.data.payload}>
+                </c-wel-log-event-item>
+            </li>
+        </template>
+    </ul>
+</template>

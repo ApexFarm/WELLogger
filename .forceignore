@@ -3,5 +3,6 @@
 #
 
 package.xml
+src/static
 **/jsconfig.json
 **/.eslintrc.json

@@ -1,0 +1,45 @@
+:host {
+    line-height: 12px;
+    font-size: 12px;
+}
+
+span {
+    padding: 1px 2px;
+}
+
+.level {
+    display: inline-block;
+    border-radius: 2px;
+    width: 40px;
+    font-size: 10px;
+    line-height: 13px;
+    text-align: center;
+}
+
+.DEBUG {
+    color: #cccccc;
+    background-color: #555555;
+}
+
+.WARN {
+    color: #333333;
+    background-color: #ffcc00;
+}
+
+.INFO {
+    color: #333333;
+    background-color: #eeeeee;
+}
+
+.ERROR {
+    color: #eeeeee;
+    background-color: #cc3300;
+}
+
+.FINE {
+    color: #666666;
+}
+
+.NONE {
+    color: #666666;
+}

@@ -1,0 +1,8 @@
+c-wel-log-event-list {
+    display: block;
+    height: calc(100% - 36px);
+}
+
+c-wel-log-event-footbar {
+    height: 36px;
+}

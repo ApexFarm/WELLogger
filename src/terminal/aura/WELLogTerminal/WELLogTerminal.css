@@ -1,0 +1,7 @@
+.THIS.container {
+    position: absolute;
+    top: -12px;
+    left: -12px;
+    height: calc(100% + 24px);
+    width: calc(100% + 24px);
+}

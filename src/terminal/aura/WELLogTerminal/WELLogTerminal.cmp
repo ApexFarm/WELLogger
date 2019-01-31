@@ -1,0 +1,12 @@
+<aura:component implements="flexipage:availableForAllPageTypes" access="global">
+    <aura:attribute name="subscription" type="Map" access="private" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <lightning:empApi aura:id="empApi" />
+    <c:welLogEventContainer
+        aura:id="logEventContainer"
+        class="container"
+        isSubscribing="{!v.subscription != null}"
+        ontogglesubscription="{!c.toggleSubscription}"/>
+</aura:component>
