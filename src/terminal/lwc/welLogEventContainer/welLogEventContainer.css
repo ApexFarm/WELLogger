@@ -1,5 +1,26 @@
+:host {
+    position: absolute;
+    left: -12px;
+    width: calc(100% + 24px);
+    transition-property: height, top, z-index;
+    transition-duration: .3s;
+    transition-timing-function: ease-in;
+}
+
+:host(.fullscreen) {
+    top: -102px;
+    height: calc(100% + 114px);
+    z-index: 5000;
+}
+
+:host(.fitscreen) {
+    top: -12px;
+    height: calc(100% + 24px);
+    z-index: 0;
+    transition-delay: 0s, 0s, .3s;
+}
+
 c-wel-log-event-list {
-    display: block;
     height: calc(100% - 36px);
 }
 

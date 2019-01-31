@@ -3,6 +3,8 @@ import { LightningElement, api, track } from 'lwc';
 export default class WelLogEventContainer extends LightningElement {
     @api
     isSubscribing = false;
+    @api
+    isFullscreen = false;
     @track
     logEvents = [];
 
@@ -13,14 +15,23 @@ export default class WelLogEventContainer extends LightningElement {
         }
     }
 
-    get toggleButtonLabel() {
+    get subscribeLabel() {
         return this.isSubscribing ? 'Unsubscribe' : 'Subscribe';
     }
 
-    handleToggleButtonClick(event) {
-        const toggleSubscription = new CustomEvent('togglesubscription', {
+    get fullscreenLabel() {
+        return this.isFullscreen ? 'Min' : 'Max';
+    }
+
+    handleSubscribeClick(event) {
+        this.dispatchEvent(new CustomEvent('togglesubscribe', {
             detail: { event }
-        });
-        this.dispatchEvent(toggleSubscription);
+        }));
+    }
+
+    handleFullscreenClick(event) {
+        this.dispatchEvent(new CustomEvent('togglefullscreen', {
+            detail: { event }
+        }));
     }
 }

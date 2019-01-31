@@ -2,6 +2,16 @@
     position: absolute;
     top: -12px;
     left: -12px;
-    height: calc(100% + 24px);
-    width: calc(100% + 24px);
+    height: calc(100% - 82px);
+    width: 100%;
+}
+
+
+@media only screen and (max-width: 600px) {
+    .THIS.container {
+        top: 0;
+        left: 0;
+        height: calc(100% - 60px);
+        width: calc(100%);
+    }
 }

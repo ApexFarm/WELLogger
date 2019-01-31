@@ -11,7 +11,6 @@ export default class WelLogEventItem extends LightningElement {
         'N': 'NONE',
     };
 
-    @api
     log;
     level;
     time;

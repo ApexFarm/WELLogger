@@ -2,8 +2,14 @@
     <c-wel-log-event-list log-events={logEvents}></c-wel-log-event-list>
     <c-wel-log-event-footbar>
         <lightning-button
-            label={toggleButtonLabel}
-            onclick={handleToggleButtonClick}>
+            slot="subscribe"
+            label={subscribeLabel}
+            onclick={handleSubscribeClick}>
+        </lightning-button>
+        <lightning-button
+            slot="fullscreen"
+            label={fullscreenLabel}
+            onclick={handleFullscreenClick}>
         </lightning-button>
     </c-wel-log-event-footbar>
 </template>

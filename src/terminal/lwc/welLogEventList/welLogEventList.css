@@ -1,8 +1,12 @@
 :host {
+    display: block;
     background-color: #333333;
     color: #eeeeee;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 ul {
+    padding: 5px;
     list-style: none;
 }

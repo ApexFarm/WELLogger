@@ -7,6 +7,10 @@ span {
     padding: 1px 2px;
 }
 
+.nsp {
+    color: #54ebc9;
+}
+
 .level {
     display: inline-block;
     border-radius: 2px;

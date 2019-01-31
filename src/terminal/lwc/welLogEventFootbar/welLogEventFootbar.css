@@ -1,3 +1,4 @@
-.toggle {
-    text-align: right;
+:host {
+    display: block;
+    background-color: #5a9fdc;
 }
