@@ -16,7 +16,7 @@
         <name>CustomMetadata</name>
     </types>
     <types>
-        <members>welLogEventPage</members>
+        <members>welLogEventContainer</members>
         <members>welLogEventList</members>
         <members>welLogEventItem</members>
         <members>welLogEventFootbar</members>

@@ -1,7 +1,13 @@
 @IsTest
 private without sharing class WELLoggerTest {
-    @IsTest
-    static void testLoggingPerformance() {
+    static void addField(Metadata.CustomMetadata customMetadata, String fieldName, Object value) {
+        Metadata.CustomMetadataValue customField = new Metadata.CustomMetadataValue();
+        customField.field = fieldName;
+        customField.value = value;
+        customMetadata.values.add(customField);
+    }
+
+    @IsTest static void testLoggingPerformance() {
         WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
         setting.enabled = true;
         setting.loggingLevelEvent = LoggingLevel.DEBUG;
@@ -24,8 +30,7 @@ private without sharing class WELLoggerTest {
         System.debug(Limits.getCpuTime());
     }
 
-    @IsTest
-    static void testLoggerNamespace() {
+    @IsTest static void testLoggerNamespaceChaining() {
         WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
         setting.enabled = true;
         setting.loggingLevelEvent = LoggingLevel.DEBUG;
@@ -42,38 +47,36 @@ private without sharing class WELLoggerTest {
         System.assertEquals('test:test:test', ((WELLogger.Logger)logger).namespace);
     }
 
-    // @IsTest
-    // static void testLoggingLevelToString() {
-    //     WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
-    //     setting.enabled = true;
-    //     setting.loggingLevelEvent = LoggingLevel.FINEST;
-    //     setting.loggingLevelDebug = LoggingLevel.FINEST;
-    //     WELLogger.LOGGER_SETTING_CACHE.put('test', setting);
+    @IsTest static void testLoggingLevelToString() {
+        WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
+        setting.enabled = true;
+        setting.loggingLevelEvent = LoggingLevel.FINEST;
+        setting.loggingLevelDebug = LoggingLevel.FINEST;
+        WELLogger.LOGGER_SETTING_CACHE.put('test', setting);
 
-    //     WELLogger.get('test').debug('******');
-    //     WELLogger.get('test').debug(LoggingLevel.DEBUG, '******');
-    //     WELLogger.get('test').debug(LoggingLevel.ERROR, '******');
-    //     WELLogger.get('test').debug(LoggingLevel.WARN, '******');
-    //     WELLogger.get('test').debug(LoggingLevel.INFO, '******');
-    //     WELLogger.get('test').debug(LoggingLevel.FINE, '******');
-    //     WELLogger.get('test').debug(LoggingLevel.FINER, '******');
-    //     WELLogger.get('test').debug(LoggingLevel.FINEST, '******');
-    //     WELLogger.get('test').debug(LoggingLevel.NONE, '******');
-    //     WELLogger.save();
+        WELLogger.get('test').debug('******');
+        WELLogger.get('test').debug(LoggingLevel.DEBUG, '******');
+        WELLogger.get('test').debug(LoggingLevel.ERROR, '******');
+        WELLogger.get('test').debug(LoggingLevel.WARN, '******');
+        WELLogger.get('test').debug(LoggingLevel.INFO, '******');
+        WELLogger.get('test').debug(LoggingLevel.FINE, '******');
+        WELLogger.get('test').debug(LoggingLevel.FINER, '******');
+        WELLogger.get('test').debug(LoggingLevel.FINEST, '******');
+        // NONE will disable the log
+        WELLogger.get('test').debug(LoggingLevel.NONE, '******');
 
-    //     System.assertEquals(8, logs.size());
-    //     System.assertEquals('D', logs[0].lvl);
-    //     System.assertEquals('D', logs[1].lvl);
-    //     System.assertEquals('E', logs[2].lvl);
-    //     System.assertEquals('W', logs[3].lvl);
-    //     System.assertEquals('I', logs[4].lvl);
-    //     System.assertEquals('F', logs[5].lvl);
-    //     System.assertEquals('F', logs[6].lvl);
-    //     System.assertEquals('F', logs[7].lvl);
-    // }
+        System.assertEquals(8, WELLogger.LOG_QUEUE.size());
+        System.assertEquals('D', WELLogger.LOG_QUEUE[0].lvl);
+        System.assertEquals('D', WELLogger.LOG_QUEUE[1].lvl);
+        System.assertEquals('E', WELLogger.LOG_QUEUE[2].lvl);
+        System.assertEquals('W', WELLogger.LOG_QUEUE[3].lvl);
+        System.assertEquals('I', WELLogger.LOG_QUEUE[4].lvl);
+        System.assertEquals('F', WELLogger.LOG_QUEUE[5].lvl);
+        System.assertEquals('F', WELLogger.LOG_QUEUE[6].lvl);
+        System.assertEquals('F', WELLogger.LOG_QUEUE[7].lvl);
+    }
 
-    @IsTest
-    static void testLoggingLevelDefault() {
+    @IsTest static void testLoggingLevelDefault() {
         List<WELLogSetting__mdt> loggerSettings = [
             SELECT
                 MasterLabel,
@@ -98,8 +101,7 @@ private without sharing class WELLoggerTest {
         }
     }
 
-    @IsTest
-    static void testLoggingNullException() {
+    @IsTest static void testLoggingNullException() {
         WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
         setting.enabled = true;
         setting.loggingLevelEvent = LoggingLevel.ERROR;
@@ -111,12 +113,12 @@ private without sharing class WELLoggerTest {
             dict.get('key');
         } catch (Exception ex) {
             WELLogger.get('test').debug(LoggingLevel.ERROR, ex);
-            WELLogger.save();
+
         }
+        System.assertEquals(1, WELLogger.LOG_QUEUE.size());
     }
 
-    @IsTest
-    static void testLoggingOutputNONE() {
+    @IsTest static void testLoggingOutputNONE() {
         WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
         setting.enabled = true;
         setting.loggingLevelEvent = LoggingLevel.NONE;
@@ -127,15 +129,15 @@ private without sharing class WELLoggerTest {
         a.debug('******');
         a.debug(LoggingLevel.ERROR, '******');
         a.debug(LoggingLevel.NONE, '******');
-        WELLogger.save();
+        System.assertEquals(0, WELLogger.LOG_QUEUE.size());
 
         WELLogger.ILogger b = WELLogger.get('test:b');
         b.debug(LoggingLevel.ERROR, '******');
         b.debug(LoggingLevel.NONE, '******');
+        System.assertEquals(0, WELLogger.LOG_QUEUE.size());
     }
 
-    @IsTest
-    static void testLoggingOutputDisalbed() {
+    @IsTest static void testLoggingOutputDisalbed() {
         WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
         setting.enabled = false;
         setting.loggingLevelEvent = LoggingLevel.FINEST;
@@ -146,15 +148,15 @@ private without sharing class WELLoggerTest {
         a.debug('******');
         a.debug(LoggingLevel.ERROR, '******');
         a.debug(LoggingLevel.NONE, '******');
-        WELLogger.save();
+        System.assertEquals(0, WELLogger.LOG_QUEUE.size());
 
         WELLogger.ILogger b = WELLogger.get('test:b');
         b.debug(LoggingLevel.ERROR, '******');
         b.debug(LoggingLevel.NONE, '******');
+        System.assertEquals(0, WELLogger.LOG_QUEUE.size());
     }
 
-    @IsTest
-    static void testLoggingOutputDatabaseAndAPI() {
+    @IsTest static void testLoggingOutputEventAndDebug() {
         WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
         setting.enabled = true;
         setting.loggingLevelEvent = LoggingLevel.ERROR;
@@ -164,31 +166,86 @@ private without sharing class WELLoggerTest {
         WELLogger.ILogger a = WELLogger.get('test:a');
         a.debug('******');
         a.debug('******');
-
         a.debug(LoggingLevel.ERROR, '******');
         a.debug(LoggingLevel.ERROR, '******');
+        System.assertEquals(2, WELLogger.LOG_QUEUE.size());
         WELLogger.save();
+        System.assertEquals(0, WELLogger.LOG_QUEUE.size());
 
         WELLogger.ILogger b = WELLogger.get('test:b');
-        b.debug(LoggingLevel.ERROR, '******');
-        b.debug(LoggingLevel.ERROR, '******');
-
-
+        b.debug('******', '******');
+        b.debug('******', '******');
+        System.assertEquals(0, WELLogger.LOG_QUEUE.size());
+        a.debug(LoggingLevel.ERROR, '******', '******');
+        a.debug(LoggingLevel.ERROR, '******', '******');
+        System.assertEquals(2, WELLogger.LOG_QUEUE.size());
         WELLogger.save();
+        System.assertEquals(0, WELLogger.LOG_QUEUE.size());
     }
 
-    @IsTest
-    static void testCustomLogger() {
+    @IsTest static void testMainLogger() {
+        WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
+        setting.enabled = true;
+        setting.loggingLevelEvent = LoggingLevel.ERROR;
+        setting.loggingLevelDebug = LoggingLevel.DEBUG;
+        WELLogger.LOGGER_SETTING_CACHE.put(WELLogger.LOGGER_NAME_MAIN, setting);
+
+        // inject main logger
+        WELLogger.LOGGER_CACHE.clear();
+        WELLogger.MAIN_LOGGER = WELLogger.get('main');
+
+        WELLogger.debug('******');
+        WELLogger.debug('******');
+        WELLogger.debug(LoggingLevel.ERROR, '******');
+        WELLogger.debug(LoggingLevel.ERROR, '******');
+        System.assertEquals(2, WELLogger.LOG_QUEUE.size());
+        WELLogger.save();
+        System.assertEquals(0, WELLogger.LOG_QUEUE.size());
+
+        WELLogger.debug('******', '******');
+        WELLogger.debug('******', '******');
+        System.assertEquals(0, WELLogger.LOG_QUEUE.size());
+        WELLogger.debug(LoggingLevel.ERROR, '******', '******');
+        WELLogger.debug(LoggingLevel.ERROR, '******', '******');
+        System.assertEquals(2, WELLogger.LOG_QUEUE.size());
+        WELLogger.save();
+        System.assertEquals(0, WELLogger.LOG_QUEUE.size());
+    }
+
+    @IsTest static void testCustomLogger() {
+        WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
+        setting.enabled = true;
+        setting.loggingLevelEvent = LoggingLevel.DEBUG;
+        setting.loggingLevelDebug = LoggingLevel.DEBUG;
+        WELLogger.LOGGER_SETTING_CACHE.put('test', setting);
+
+        WELLogger.ILogger c1 = WELLogger.get('test:c');
+        c1.debug('******');
+        System.assertEquals(1, WELLogger.LOG_QUEUE.size());
+
+        WELLogger.ILogger c2 = WELLogger.get('test:c');
+        System.assertEquals(c1, c2);
+
+        WELLogger.ILogger c3 = WELLogger.get(null);
+        System.assertEquals(WELLogger.MAIN_LOGGER, c3);
+    }
+
+    @IsTest static void testCustomLoggerExtension() {
         WELLogger.LoggerSetting setting = new WELLogger.LoggerSetting();
         setting.enabled = true;
         setting.loggingLevelEvent = LoggingLevel.NONE;
         setting.loggingLevelDebug = LoggingLevel.NONE;
         WELLogger.LOGGER_SETTING_CACHE.put('test', setting);
 
-        WELLogger.ILogger c = WELLogger.get('test:c', CustomLogger.class);
-        c.debug('******');
-        WELLogger.save();
+        WELLogger.ILogger c1 = WELLogger.get('test:c', CustomLogger.class);
+        c1.debug('******');
+        System.assertEquals(3, WELLogger.LOG_QUEUE.size());
 
+        WELLogger.ILogger c2 = WELLogger.get('test:c', CustomLogger.class);
+        System.assertEquals(c1, c2);
+
+        WELLogger.ILogger c4 = WELLogger.get('test:c4', Map<String, String>.class);
+        System.assertEquals(WELLogger.MAIN_LOGGER, c4);
     }
 
     class CustomLogger extends WELLogger.Logger {

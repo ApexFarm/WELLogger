@@ -2,14 +2,17 @@ public with sharing class WELLogger {
     private static final Map<String, LoggingLevel> LOGGING_LEVEL_CACHE;
     @TestVisible
     private static final Map<String, LoggerSetting> LOGGER_SETTING_CACHE;
+    @TestVisible
     private static final Map<String, ILogger> LOGGER_CACHE;
     @TestVisible
     private static final List<Log> LOG_QUEUE;
 
     private static final String LOGGER_NAME_DEFAULT = 'default';
+    @TestVisible
     private static final String LOGGER_NAME_MAIN = 'main';
     private static final LoggerSetting DEFAULT_LOGGER_SETTING;
-    private static final ILogger MAIN_LOGGER;
+    @TestVisible
+    private static ILogger MAIN_LOGGER;
 
     static {
         LOGGING_LEVEL_CACHE = new Map<String, LoggingLevel>();
@@ -58,6 +61,10 @@ public with sharing class WELLogger {
     private WELLogger() {}
 
     public static ILogger get(String name) {
+        if (name == null) {
+            return MAIN_LOGGER;
+        }
+
         if (LOGGER_CACHE.containsKey(name)) {
             return LOGGER_CACHE.get(name);
         }
@@ -66,6 +73,10 @@ public with sharing class WELLogger {
     }
 
     public static ILogger get(String name, Type className) {
+        if (name == null) {
+            return MAIN_LOGGER;
+        }
+
         if (LOGGER_CACHE.containsKey(name)) {
             return LOGGER_CACHE.get(name);
         }
@@ -83,10 +94,6 @@ public with sharing class WELLogger {
     }
 
     private static ILogger get(String namespace, Logger newLogger) {
-        if (namespace == null) {
-            return MAIN_LOGGER;
-        }
-
         LoggerSetting setting = LOGGER_SETTING_CACHE.get(namespace.substringBefore(':'));
         if (setting == null) {
             setting = DEFAULT_LOGGER_SETTING;
@@ -202,12 +209,14 @@ public with sharing class WELLogger {
 
             Log log = new Log(logLvl, this.namespace, message, trace);
             if (this.setting.loggingLevelEvent != LoggingLevel.NONE
-                && this.setting.loggingLevelEvent.ordinal() <= logLvl.ordinal()) {
+                && logLvl != LoggingLevel.NONE
+                && logLvl.ordinal() >= this.setting.loggingLevelEvent.ordinal() ) {
                 LOG_QUEUE.add(log);
             }
 
             if (this.setting.loggingLevelDebug != LoggingLevel.NONE
-                && this.setting.loggingLevelDebug.ordinal() <= logLvl.ordinal()) {
+                && logLvl != LoggingLevel.NONE
+                && logLvl.ordinal() >= this.setting.loggingLevelDebug.ordinal()) {
                 System.debug(logLvl, log);
             }
         }
@@ -224,29 +233,20 @@ public with sharing class WELLogger {
     public virtual class Log {
         @TestVisible
         @AuraEnabled
+        protected String lvl { get; private set; }
+        @TestVisible
+        @AuraEnabled
         protected String nsp { get; private set; }
         @TestVisible
         @AuraEnabled
         protected String msg { get; private set; }
         @TestVisible
         @AuraEnabled
-        protected String lvl { get; private set; }
-        @TestVisible
-        @AuraEnabled
         protected Object trc { get; private set; }
 
         public Log(LoggingLevel logLvl, String namespace, Object message, Object trace) {
             nsp = namespace;
-            msg = String.valueOf(message);
-            if (message instanceOf Exception) {
-                Exception ex = (Exception)message;
-                trc = new Map<String, String> {
-                    'TypeName' => ex.getTypeName(),
-                    'Message' => ex.getMessage(),
-                    'StackTrace' => ex.getStackTraceString()
-                };
-            }
-            // format(message, trace);
+            format(message, trace);
 
             switch on logLvl {
                 when DEBUG {
@@ -273,21 +273,21 @@ public with sharing class WELLogger {
         protected virtual void format(Object message, Object trace) {
             if (message instanceOf Exception) {
                 Exception ex = (Exception)message;
-                msg = String.format('{0}: {1}\r\n{2}', new List<String> {
+                msg = String.format('{0}: {1}', new List<String> {
                     ex.getTypeName(),
-                    ex.getMessage(),
-                    ex.getStackTraceString()
+                    ex.getMessage()
                 });
+                trc = ex.getStackTraceString();
             } else if (trace == null) {
                 msg = String.valueOf(message);
             } else if (trace instanceOf Exception) {
                 Exception ex = (Exception)trace;
-                msg = String.format('{0}|{1}: {2}\r\n{3}', new List<String> {
+                msg = String.format('{0}|{1}: {2}', new List<String> {
                     String.valueOf(message),
                     ex.getTypeName(),
-                    ex.getMessage(),
-                    ex.getStackTraceString()
+                    ex.getMessage()
                 });
+                trc = ex.getStackTraceString();
             } else {
                 msg = (String)message;
                 trc = trace;

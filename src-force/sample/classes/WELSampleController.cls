@@ -15,10 +15,10 @@ public with sharing class WELSampleController {
 
         Response res = new Response();
         try {
-            logger.debug(LoggingLevel.INFO, 'doing lots of uninteresting work');
-            logger.debug(LoggingLevel.WARN, 'doing some work');
-            logger.debug(LoggingLevel.INFO, 'doing lots of uninteresting work');
-            logger.debug(LoggingLevel.WARN, 'doing some work');
+            // logger.debug(LoggingLevel.INFO, 'doing lots of uninteresting work');
+            // logger.debug(LoggingLevel.WARN, 'doing some work');
+            // logger.debug(LoggingLevel.INFO, 'doing lots of uninteresting work');
+            // logger.debug(LoggingLevel.WARN, 'doing some work');
             logger.debug('a list of objects', [
                 SELECT
                     MasterLabel,

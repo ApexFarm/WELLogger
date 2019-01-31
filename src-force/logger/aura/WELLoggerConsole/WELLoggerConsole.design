@@ -1,3 +1,0 @@
-<design:component >
-        <design:attribute name="name" label="Field To Update" description="The field you want you update with the stopwatch results..." />
-</design:component>

@@ -3,6 +3,12 @@
         "experimentalDecorators": true,
         "baseUrl": ".",
         "paths": {
+            "c/wel-logger": [
+                "../../logger/staticresources/WELLogger/WELLogger.js"
+            ],
+            "c/wel-log-event-container": [
+                "welLogEventContainer/welLogEventContainer.js"
+            ],
             "c/wel-log-event-footbar": [
                 "welLogEventFootbar/welLogEventFootbar.js"
             ],
@@ -11,12 +17,6 @@
             ],
             "c/wel-log-event-list": [
                 "welLogEventList/welLogEventList.js"
-            ],
-            "c/wel-log-event-page": [
-                "welLogEventPage/welLogEventPage.js"
-            ],
-            "c/wel-logger": [
-                "../staticresources/WELLogger/WELLogger.js"
             ]
         }
     },
