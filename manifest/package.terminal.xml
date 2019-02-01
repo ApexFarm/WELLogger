@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>WELLogViewer</members>
+        <name>AuraDefinitionBundle</name>
+    </types>
+    <types>
+        <members>welLogTerminal</members>
+        <members>welLogTerminalList</members>
+        <members>welLogTerminalListItem</members>
+        <members>welLogTerminalFooter</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <version>45.0</version>
+</Package>
