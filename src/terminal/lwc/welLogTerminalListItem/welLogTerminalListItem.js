@@ -17,8 +17,8 @@ export default class WelLogTerminalListItem extends LightningElement {
 
     @api
     set item(item) {
-        this.level = WelLogEventItem.lvlMap[item.LVL__c];
-        this.time = (new Date(item.TST__c - WelLogEventItem.tzoffset)).toISOString().slice(11, -1);
+        this.level = WelLogTerminalListItem.lvlMap[item.LVL__c];
+        this.time = (new Date(item.TST__c - WelLogTerminalListItem.tzoffset)).toISOString().slice(11, -1);
         this.log = item;
     }
 
