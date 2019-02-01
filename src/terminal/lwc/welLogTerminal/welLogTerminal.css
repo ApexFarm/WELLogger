@@ -20,10 +20,10 @@
     transition-delay: 0s, 0s, .3s;
 }
 
-c-wel-log-event-list {
-    height: calc(100% - 36px);
+c-wel-log-terminal-list {
+    height: calc(100% - 24px);
 }
 
-c-wel-log-event-footbar {
-    height: 36px;
+c-wel-log-terminal-footer {
+    height: 24px;
 }

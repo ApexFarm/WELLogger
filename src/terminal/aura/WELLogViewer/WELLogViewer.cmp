@@ -5,7 +5,7 @@
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
 
     <lightning:empApi aura:id="empApi" />
-    <c:welLogEventContainer
+    <c:welLogTerminal
         aura:id="logEventContainer"
         class="{!v.isFullscreen ? 'fullscreen' : 'fitscreen'}"
         isSubscribing="{!v.subscription != null}"

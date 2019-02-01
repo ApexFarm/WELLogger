@@ -6,17 +6,17 @@
             "c/wel-logger": [
                 "../../logger/staticresources/WELLogger/WELLogger.js"
             ],
-            "c/wel-log-event-container": [
-                "welLogEventContainer/welLogEventContainer.js"
+            "c/wel-log-terminal": [
+                "welLogTerminal/welLogTerminal.js"
             ],
-            "c/wel-log-event-footbar": [
-                "welLogEventFootbar/welLogEventFootbar.js"
+            "c/wel-log-terminal-footer": [
+                "welLogTerminalFooter/welLogTerminalFooter.js"
             ],
-            "c/wel-log-event-item": [
-                "welLogEventItem/welLogEventItem.js"
+            "c/wel-log-terminal-list": [
+                "welLogTerminalList/welLogTerminalList.js"
             ],
-            "c/wel-log-event-list": [
-                "welLogEventList/welLogEventList.js"
+            "c/wel-log-terminal-list-item": [
+                "welLogTerminalListItem/welLogTerminalListItem.js"
             ]
         }
     },

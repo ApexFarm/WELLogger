@@ -2,8 +2,8 @@
     <ul>
         <template for:each={logEvents} for:item="log">
             <li key={log.data.event.replayId}>
-                <c-wel-log-event-item item={log.data.payload}>
-                </c-wel-log-event-item>
+                <c-wel-log-terminal-list-item item={log.data.payload}>
+                </c-wel-log-terminal-list-item>
             </li>
         </template>
     </ul>

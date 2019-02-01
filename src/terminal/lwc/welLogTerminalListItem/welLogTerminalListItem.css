@@ -7,8 +7,12 @@ span {
     padding: 1px 2px;
 }
 
+.tst {
+    color: #d7ba7d;
+}
+
 .nsp {
-    color: #54ebc9;
+    color: #4EC9B0;
 }
 
 .level {
@@ -20,30 +24,20 @@ span {
     text-align: center;
 }
 
-.DEBUG {
-    color: #cccccc;
-    background-color: #555555;
-}
-
-.WARN {
-    color: #333333;
-    background-color: #ffcc00;
+.NONE, .FINE, .DEBUG {
+    background-color: #333333;
 }
 
 .INFO {
-    color: #333333;
-    background-color: #eeeeee;
+    color: #232323;
+    background-color: #d3d3d3d3;
+}
+
+.WARN {
+    color: #232323;
+    background-color: #ffcc00;
 }
 
 .ERROR {
-    color: #eeeeee;
     background-color: #cc3300;
-}
-
-.FINE {
-    color: #666666;
-}
-
-.NONE {
-    color: #666666;
 }

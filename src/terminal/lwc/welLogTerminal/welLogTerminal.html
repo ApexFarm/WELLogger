@@ -1,0 +1,17 @@
+<template>
+    <c-wel-log-terminal-list log-events={logEvents}></c-wel-log-terminal-list>
+    <i class="fas fa-play-circle"></i>
+    <i class="fas fa-pause-circle"></i>
+    <c-wel-log-terminal-footer>
+        <lightning-button
+            slot="fullscreen"
+            label={fullscreenLabel}
+            onclick={handleFullscreenClick}>
+        </lightning-button>
+        <lightning-button
+            slot="subscribe"
+            label={subscribeLabel}
+            onclick={handleSubscribeClick}>
+        </lightning-button>
+    </c-wel-log-terminal-footer>
+</template>

@@ -1,6 +1,6 @@
 import { LightningElement, api } from 'lwc';
 
-export default class WelLogEventItem extends LightningElement {
+export default class WelLogTerminalListItem extends LightningElement {
     static tzoffset = (new Date()).getTimezoneOffset() * 60000;
     static lvlMap = {
         'D': 'DEBUG',
