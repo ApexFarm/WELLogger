@@ -8,6 +8,7 @@
                 }
                 return element;
             },
+            configurable: true,
         });
     },
 
@@ -20,6 +21,7 @@
             set: function(value) {
                 cmp.set(attName, value);
             },
+            configurable: true,
         });
     },
 
@@ -30,6 +32,7 @@
         .then(subscription => {
             console.info('Subscribed to channel ', subscription.channel);
             this.subscription = subscription;
+            return this.subscription;
         });
     },
 
@@ -39,7 +42,6 @@
         }))
         .then((success) => {
             if (success) {
-
                 this.subscription = null;
             }
         });

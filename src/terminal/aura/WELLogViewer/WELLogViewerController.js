@@ -9,7 +9,15 @@
         helper.empApi.onError($A.getCallback(error => {
             console.error('EMP API error: ', JSON.parse(JSON.stringify(error)));
         }));
-        helper.subscribe();
+
+        if (helper.subscription) {
+            helper.unsubscribe(helper.subscription)
+            .then(() => {
+                helper.subscribe();
+            })
+        } else {
+            helper.subscribe();
+        }
     },
 
     toggleSubscription: function(cmp, event, helper) {

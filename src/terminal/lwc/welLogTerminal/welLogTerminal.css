@@ -24,17 +24,6 @@ c-wel-log-terminal-list {
     height: calc(100% - 24px);
 }
 
-c-wel-log-terminal-footer {
+c-wel-log-footer {
     height: 24px;
 }
-
-    c-wel-log-terminal-footer i {
-        padding: 0 5px;
-        font-size: 14px;
-        line-height: 24px;
-        color: #f3f3f3;
-    }
-
-    c-wel-log-terminal-footer li:last-child {
-        padding: 0 10px;
-    }

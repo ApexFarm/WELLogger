@@ -9,7 +9,6 @@ export default class WelLogTerminal extends LightningElement {
     isFullscreen = false;
     @track
     isScrollLocked = false;
-    @track
     isResourceLoaded = false;
     logListCmp;
 
@@ -21,42 +20,6 @@ export default class WelLogTerminal extends LightningElement {
         this.logListCmp.addLogEvent(event);
     }
 
-    get subscribeClass() {
-        return this.isSubscribing ? 'fas fa-pause-circle' : 'fas fa-play-circle';
-    }
-
-    get subscribeTitle() {
-        return this.isSubscribing ? 'Unsubscribe' : 'Subscribe';
-    }
-
-    handleSubscribeClick(event) {
-        this.dispatchEvent(new CustomEvent('togglesubscribe', {
-            detail: { event }
-        }));
-    }
-
-    get fullscreenClass() {
-        return this.isFullscreen ? 'fas fa-window-minimize' : 'fas fa-window-maximize';
-    }
-
-    get fullscreenTitle() {
-        return this.isFullscreen ?  'Restore Window' : 'Maximize Window';
-    }
-
-    handleFullscreenClick(event) {
-        this.dispatchEvent(new CustomEvent('togglefullscreen', {
-            detail: { event }
-        }));
-    }
-
-    get scrollLockClass() {
-        return this.isScrollLocked ? 'fas fa-lock-open' : 'fas fa-lock';
-    }
-
-    handleScrollLockClick() {
-        this.isScrollLocked = !this.isScrollLocked;
-    }
-
     connectedCallback() {
         if (this.isResourceLoaded) {
             return;
@@ -66,5 +29,21 @@ export default class WelLogTerminal extends LightningElement {
         loadStyle(this, resource + '/fontawesome/css/all.min.css')
         .then(() => {})
         .catch(() => {});
+    }
+
+    toggleScrollLock() {
+        this.isScrollLocked = !this.isScrollLocked;
+    }
+
+    toggleFullscreen(event) {
+        this.dispatchEvent(new CustomEvent('togglefullscreen', {
+            detail: { event },
+        }));
+    }
+
+    toggleSubscribe(event) {
+        this.dispatchEvent(new CustomEvent('togglesubscribe', {
+            detail: { event },
+        }));
     }
 }

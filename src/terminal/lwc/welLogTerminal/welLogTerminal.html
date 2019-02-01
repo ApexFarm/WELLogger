@@ -1,14 +1,29 @@
 <template>
     <c-wel-log-terminal-list is-scroll-locked={isScrollLocked}></c-wel-log-terminal-list>
-    <c-wel-log-terminal-footer>
-        <i class={scrollLockClass}
-            title="Toggle Scroll Lock"
-            onclick={handleScrollLockClick}></i>
-        <i class={fullscreenClass}
-            title={fullscreenTitle}
-            onclick={handleFullscreenClick}></i>
-        <i class={subscribeClass}
-            title={subscribeTitle}
-            onclick={handleSubscribeClick}></i>
-    </c-wel-log-terminal-footer>
+    <c-wel-log-footer>
+        <c-wel-log-footer-toggle
+            is-active={isScrollLocked}
+            false-class="fas fa-lock"
+            false-title="Toggle Scroll Lock"
+            true-class="fas fa-lock-open"
+            true-title="Toggle Scroll Lock"
+            onclick={toggleScrollLock}
+        ></c-wel-log-footer-toggle>
+        <c-wel-log-footer-toggle
+            is-active={isFullscreen}
+            false-class="fas fa-window-maximize"
+            false-title="Toggle Window Maximization"
+            true-class="fas fa-window-minimize"
+            true-title="Toggle Window Maximization"
+            onclick={toggleFullscreen}
+        ></c-wel-log-footer-toggle>
+        <c-wel-log-footer-toggle
+            is-active={isSubscribing}
+            false-class="fas fa-play-circle"
+            false-title="Toggle Subscription"
+            true-class="fas fa-pause-circle"
+            true-title="Toggle Subscription"
+            onclick={toggleSubscribe}
+        ></c-wel-log-footer-toggle>
+    </c-wel-log-footer>
 </template>

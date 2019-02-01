@@ -9,6 +9,8 @@
         <members>welLogTerminalList</members>
         <members>welLogTerminalListItem</members>
         <members>welLogTerminalFooter</members>
+        <members>welLogFooter</members>
+        <members>welLogFooterButton</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>

@@ -1,17 +1,18 @@
 :host {
-    line-height: 12px;
     font-size: 12px;
 }
 
-span {
-    padding: 1px 2px;
+.replayid {
+    color: #707070;
 }
 
 .tst {
+    padding: 0 2px;
     color: #d7ba7d;
 }
 
 .nsp {
+    padding: 0 2px 0 6px;
     color: #4EC9B0;
 }
 
@@ -19,25 +20,27 @@ span {
     display: inline-block;
     border-radius: 2px;
     width: 40px;
+
     font-size: 10px;
     line-height: 13px;
     text-align: center;
+    text-indent: 0;
 }
 
-.NONE, .FINE, .DEBUG {
-    background-color: #333333;
-}
+    .NONE, .FINE, .DEBUG {
+        background-color: #333333;
+    }
 
-.INFO {
-    color: #232323;
-    background-color: #d3d3d3d3;
-}
+    .INFO {
+        color: #232323;
+        background-color: #d3d3d3d3;
+    }
 
-.WARN {
-    color: #232323;
-    background-color: #d7ba7d;
-}
+    .WARN {
+        color: #232323;
+        background-color: #d7ba7d;
+    }
 
-.ERROR {
-    background-color: #cc3300;
-}
+    .ERROR {
+        background-color: #cc3300;
+    }

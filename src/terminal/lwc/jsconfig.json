@@ -3,11 +3,17 @@
         "experimentalDecorators": true,
         "baseUrl": ".",
         "paths": {
+            "c/wel-logger": [
+                "../../logger/staticresources/WELLogger/WELLogger.js"
+            ],
+            "c/wel-log-footer": [
+                "welLogFooter/welLogFooter.js"
+            ],
+            "c/wel-log-footer-toggle": [
+                "welLogFooterToggle/welLogFooterToggle.js"
+            ],
             "c/wel-log-terminal": [
                 "welLogTerminal/welLogTerminal.js"
-            ],
-            "c/wel-log-terminal-footer": [
-                "welLogTerminalFooter/welLogTerminalFooter.js"
             ],
             "c/wel-log-terminal-list": [
                 "welLogTerminalList/welLogTerminalList.js"
