@@ -7,18 +7,18 @@
     transition-timing-function: ease-in;
 }
 
-:host(.fullscreen) {
-    top: -102px;
-    height: calc(100% + 114px);
-    z-index: 5000;
-}
+    :host(.fullscreen) {
+        top: -102px;
+        height: calc(100% + 114px);
+        z-index: 5000;
+    }
 
-:host(.fitscreen) {
-    top: -12px;
-    height: calc(100% + 24px);
-    z-index: 0;
-    transition-delay: 0s, 0s, .3s;
-}
+    :host(.fitscreen) {
+        top: -12px;
+        height: calc(100% + 24px);
+        z-index: 0;
+        transition-delay: 0s, 0s, .3s;
+    }
 
 c-wel-log-terminal-list {
     height: calc(100% - 24px);
@@ -27,3 +27,14 @@ c-wel-log-terminal-list {
 c-wel-log-terminal-footer {
     height: 24px;
 }
+
+    c-wel-log-terminal-footer i {
+        padding: 0 5px;
+        font-size: 14px;
+        line-height: 24px;
+        color: #f3f3f3;
+    }
+
+    c-wel-log-terminal-footer li:last-child {
+        padding: 0 10px;
+    }

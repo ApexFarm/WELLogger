@@ -2,3 +2,7 @@
     display: block;
     background-color: #007ACC;
 }
+
+.controls {
+    float: right;
+}

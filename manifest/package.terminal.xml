@@ -11,5 +11,9 @@
         <members>welLogTerminalFooter</members>
         <name>LightningComponentBundle</name>
     </types>
+    <types>
+        <members>WELLogViewer</members>
+        <name>StaticResource</name>
+    </types>
     <version>45.0</version>
 </Package>

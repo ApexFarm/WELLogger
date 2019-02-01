@@ -8,23 +8,25 @@ export default class WelLogTerminal extends LightningElement {
     @api
     isFullscreen = false;
     @track
-    logEvents = [];
+    isScrollLocked = false;
     @track
     isResourceLoaded = false;
+    logListCmp;
 
     @api
     addLogEvent(event) {
-        if (event != null) {
-            this.logEvents.push(event);
+        if (!this.logListCmp) {
+            this.logListCmp = this.template.querySelector('c-wel-log-terminal-list');
         }
+        this.logListCmp.addLogEvent(event);
     }
 
-    get subscribeLabel() {
+    get subscribeClass() {
+        return this.isSubscribing ? 'fas fa-pause-circle' : 'fas fa-play-circle';
+    }
+
+    get subscribeTitle() {
         return this.isSubscribing ? 'Unsubscribe' : 'Subscribe';
-    }
-
-    get fullscreenLabel() {
-        return this.isFullscreen ? 'Min' : 'Max';
     }
 
     handleSubscribeClick(event) {
@@ -33,10 +35,26 @@ export default class WelLogTerminal extends LightningElement {
         }));
     }
 
+    get fullscreenClass() {
+        return this.isFullscreen ? 'fas fa-window-minimize' : 'fas fa-window-maximize';
+    }
+
+    get fullscreenTitle() {
+        return this.isFullscreen ?  'Restore Window' : 'Maximize Window';
+    }
+
     handleFullscreenClick(event) {
         this.dispatchEvent(new CustomEvent('togglefullscreen', {
             detail: { event }
         }));
+    }
+
+    get scrollLockClass() {
+        return this.isScrollLocked ? 'fas fa-lock-open' : 'fas fa-lock';
+    }
+
+    handleScrollLockClick() {
+        this.isScrollLocked = !this.isScrollLocked;
     }
 
     connectedCallback() {
@@ -45,6 +63,8 @@ export default class WelLogTerminal extends LightningElement {
         }
         this.isResourceLoaded = true;
 
-        loadStyle(this, resource + '/fontawesome/css/all.min.css').catch(() => {});
+        loadStyle(this, resource + '/fontawesome/css/all.min.css')
+        .then(() => {})
+        .catch(() => {});
     }
 }

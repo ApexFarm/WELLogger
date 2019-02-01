@@ -3,9 +3,6 @@
         "experimentalDecorators": true,
         "baseUrl": ".",
         "paths": {
-            "c/wel-logger": [
-                "../../logger/staticresources/WELLogger/WELLogger.js"
-            ],
             "c/wel-log-terminal": [
                 "welLogTerminal/welLogTerminal.js"
             ],
