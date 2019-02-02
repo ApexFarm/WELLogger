@@ -1,13 +1,13 @@
 <aura:component implements="flexipage:availableForAllPageTypes" access="global">
-    <aura:attribute name="height" type="Integer" default="320" access="global" />
+    <aura:attribute name="height" type="Integer" default="260" access="global" />
     <aura:attribute name="subscription" type="Map" access="private" />
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
 
     <lightning:empApi aura:id="empApi" />
-    <c:welLogTerminal
-        aura:id="logEventContainer"
+    <c:welLogContainer
+        aura:id="logContainer"
         height="{!v.height}"
         isSubscribing="{!v.subscription != null}"
-        ontogglesubscribe="{!c.toggleSubscription}" />
+        ontogglesubscribe="{!c.toggleSubscription}"/>
 </aura:component>

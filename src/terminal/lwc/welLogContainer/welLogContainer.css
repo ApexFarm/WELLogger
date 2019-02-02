@@ -1,0 +1,24 @@
+div.wel-positioner {
+    position: relative;
+    min-height: 260px;
+}
+
+div.wel-container {
+    display: block;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%
+}
+
+    div.wel-container.fullscreen {
+        transition-duration: .3s;
+        transition-property: left, top, width, height;
+        transition-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1);
+    }
+
+    div.wel-container.fitscreen {
+        transition-duration: .25s;
+        transition-property: left, top, width, height;
+        transition-timing-function: cubic-bezier(0.4, 0.0, 1, 1);
+    }

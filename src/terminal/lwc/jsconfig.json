@@ -23,6 +23,12 @@
             ],
             "c/wel-log-terminal-list-item": [
                 "welLogTerminalListItem/welLogTerminalListItem.js"
+            ],
+            "c/wel-log-container": [
+                "welLogContainer/welLogContainer.js"
+            ],
+            "c/wel-log-pubsub": [
+                "welLogPubsub/welLogPubsub.js"
             ]
         }
     },

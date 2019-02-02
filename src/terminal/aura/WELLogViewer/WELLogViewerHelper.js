@@ -27,7 +27,7 @@
 
     subscribe: function() {
         return this.empApi.subscribe('/event/WELLog__e', 1672, $A.getCallback(logEvent => {
-            this.logEventContainer.addLogEvent(logEvent);
+            this.logContainer.addLogEvent(logEvent);
         }))
         .then(subscription => {
             console.info('Subscribed to channel ', subscription.channel);

@@ -1,7 +1,7 @@
 ({
     doInit : function(cmp, event, helper) {
         helper.propertirizeElement(cmp, 'empApi');
-        helper.propertirizeElement(cmp, 'logEventContainer');
+        helper.propertirizeElement(cmp, 'logContainer');
         helper.propertirizeAttribute(cmp, 'subscription');
 
         // helper.empApi.setDebugFlag(true);

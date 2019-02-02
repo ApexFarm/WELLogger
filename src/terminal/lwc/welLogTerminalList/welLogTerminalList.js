@@ -1,17 +1,11 @@
-import { LightningElement, api, track } from 'lwc';
+import { LightningElement, api, track, wire } from 'lwc';
+import { registerListener, unregisterAllListeners } from 'c/welLogPubsub';
+import { CurrentPageReference } from 'lightning/navigation';
 
 export default class WelLogTerminalList extends LightningElement {
-    @track
-    logEvents = [];
-    @api
-    isScrollLocked = false;
-
-    @api
-    addLogEvent(event) {
-        if (event != null) {
-            this.logEvents.push(event);
-        }
-    }
+    @api isScrollLocked = false;
+    @track logEvents = [];
+    @wire(CurrentPageReference) pageRef;
 
     scroll() {
         if (!this.isScrollLocked) {
@@ -20,6 +14,20 @@ export default class WelLogTerminalList extends LightningElement {
                 li.scrollIntoViewIfNeeded();
             }
         }
+    }
+
+    handleLogEventAdded(logEvent) {
+        if (logEvent != null) {
+            this.logEvents.push(logEvent);
+        }
+    }
+
+    connectedCallback() {
+        registerListener('logEventAdded', this.handleLogEventAdded, this);
+    }
+
+    disconnectedCallback() {
+        unregisterAllListeners(this);
     }
 
     renderedCallback() {

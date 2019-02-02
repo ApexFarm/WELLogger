@@ -17,8 +17,7 @@ export default class WelLogTerminalListItem extends LightningElement {
     log;
     logEvent;
 
-    @api
-    set item(logEvent) {
+    @api set item(logEvent) {
         var { payload:log, event } = logEvent.data;
         this.logEvent = logEvent;
         this.replayId = event.replayId;
