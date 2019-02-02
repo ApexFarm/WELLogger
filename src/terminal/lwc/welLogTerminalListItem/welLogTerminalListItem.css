@@ -7,40 +7,35 @@
 }
 
 .tst {
-    padding: 0 2px;
     color: #d7ba7d;
 }
 
 .nsp {
-    padding: 0 2px 0 6px;
     color: #4EC9B0;
 }
 
-.level {
-    display: inline-block;
-    border-radius: 2px;
-    width: 40px;
-
-    font-size: 10px;
-    line-height: 13px;
-    text-align: center;
-    text-indent: 0;
+.line {
+    padding: 0 5px;
+    border-left-width: 3px;
+    border-left-style: solid;
 }
 
+    .line:hover {
+        background-color: rgba(102, 102, 102, 0.3);
+    }
+
     .NONE, .FINE, .DEBUG {
-        background-color: #333333;
+        border-left-color:  #333333;
     }
 
     .INFO {
-        color: #232323;
-        background-color: #d3d3d3d3;
+        border-left-color: #457c9c;
     }
 
     .WARN {
-        color: #232323;
-        background-color: #d7ba7d;
+        border-left-color: #d7ba7d;
     }
 
     .ERROR {
-        background-color: #cc3300;
+        border-left-color: #f44747;
     }

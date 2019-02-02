@@ -9,9 +9,9 @@ export default class WelLogContainer extends LightningElement {
     @track shouldAnimating = false;
     @wire(CurrentPageReference) pageRef;
 
-    @api addLogEvent(event) {
-        if (event != null) {
-            fireEvent(this.pageRef, 'logEventAdded', event);
+    @api addLogEvent(logEvent) {
+        if (logEvent != null) {
+            fireEvent(this.pageRef, 'logEventAdded', logEvent);
         }
     }
 

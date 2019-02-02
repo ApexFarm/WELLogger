@@ -4,6 +4,7 @@ import resource from '@salesforce/resourceUrl/WELLogViewer';
 
 export default class WelLogTerminal extends LightningElement {
     @api isSubscribing = false;
+    @api isFullscreen = false;
     @track isScrollLocked = false;
     isResourceLoaded = false;
 

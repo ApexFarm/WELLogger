@@ -31,7 +31,7 @@ export default class WelLogTerminalListItem extends LightningElement {
         return this.logEvent;
     }
 
-    get levelClass() {
-        return `level ${this.level}`;
+    get lineClass() {
+        return `line ${this.level}`;
     }
 }
