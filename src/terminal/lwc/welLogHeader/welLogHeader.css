@@ -1,0 +1,10 @@
+:host {
+    display: block;
+    background-color: #1E1E1E;
+    color: #D4D4D4;
+    box-shadow: 0 5px 5px 0px rgba(0, 0, 0, 0.2);
+}
+
+.right {
+    float: right;
+}

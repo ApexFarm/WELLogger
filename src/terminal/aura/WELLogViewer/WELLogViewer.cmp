@@ -1,15 +1,13 @@
 <aura:component implements="flexipage:availableForAllPageTypes" access="global">
+    <aura:attribute name="height" type="Integer" default="320" access="global" />
     <aura:attribute name="subscription" type="Map" access="private" />
-    <aura:attribute name="isFullscreen" type="Boolean" default="false" access="private" />
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
 
     <lightning:empApi aura:id="empApi" />
     <c:welLogTerminal
         aura:id="logEventContainer"
-        class="{!v.isFullscreen ? 'fullscreen' : 'fitscreen'}"
+        height="{!v.height}"
         isSubscribing="{!v.subscription != null}"
-        isFullscreen="{!v.isFullscreen}"
-        ontogglesubscribe="{!c.toggleSubscription}"
-        ontogglefullscreen="{!c.toggleFullscreen}"/>
+        ontogglesubscribe="{!c.toggleSubscription}" />
 </aura:component>

@@ -12,6 +12,9 @@
             "c/wel-log-footer-toggle": [
                 "welLogFooterToggle/welLogFooterToggle.js"
             ],
+            "c/wel-log-header": [
+                "welLogHeader/welLogHeader.js"
+            ],
             "c/wel-log-terminal": [
                 "welLogTerminal/welLogTerminal.js"
             ],

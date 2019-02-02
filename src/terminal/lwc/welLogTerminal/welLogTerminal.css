@@ -1,27 +1,34 @@
-:host {
-    position: absolute;
-    left: -12px;
-    width: calc(100% + 24px);
-    transition-property: height, top, z-index;
-    transition-duration: .3s;
-    transition-timing-function: ease-in;
+div.wel-positioner {
+    position: relative;
+    min-height: 200px;
 }
 
-    :host(.fullscreen) {
-        top: -102px;
-        height: calc(100% + 114px);
-        z-index: 5000;
+div.wel-container {
+    display: block;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%
+}
+
+    div.wel-container.fullscreen {
+        transition-duration: .3s;
+        transition-property: left, top, width, height;
+        transition-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1);
     }
 
-    :host(.fitscreen) {
-        top: -12px;
-        height: calc(100% + 24px);
-        z-index: 0;
-        transition-delay: 0s, 0s, .3s;
+    div.wel-container.fitscreen {
+        transition-duration: .25s;
+        transition-property: left, top, width, height;
+        transition-timing-function: cubic-bezier(0.4, 0.0, 1, 1);
     }
+
+c-wel-log-header {
+    height: 36px;
+}
 
 c-wel-log-terminal-list {
-    height: calc(100% - 24px);
+    height: calc(100% - 60px);
 }
 
 c-wel-log-footer {

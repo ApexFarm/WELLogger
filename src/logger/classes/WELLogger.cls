@@ -123,19 +123,27 @@ public with sharing class WELLogger {
 
     public static void save() {
         if (!LOG_QUEUE.isEmpty()) {
-            List<WELLog__e> logs = new List<WELLog__e>();
-            for (Log log : LOG_QUEUE) {
-                logs.add(new WELLog__e(
-                    TST__c = log.tst,
-                    LVL__c = log.lvl,
-                    NSP__c = log.nsp,
-                    MSG__c = log.msg,
-                    TRC__c = String.valueOf(log.trc)
-                ));
+            Type logEventType = Type.forName('WELLog__e');
+            if (logEventType != null) {
+                List<sObject> logs = new List<sObject>();
+                for (Log log : LOG_QUEUE) {
+                    logs.add(buildEvent(log));
+                }
+                Eventbus.publish(logs);
             }
-            Eventbus.publish(logs);
+
             LOG_QUEUE.clear();
         }
+    }
+
+    private static sObject buildEvent(Log log) {
+        SObject logEvent = (SObject)logEventType.newInstance();
+        logEvent.put('TST__c', log.tst);
+        logEvent.put('LVL__c', log.lvl);
+        logEvent.put('NSP__c', log.nsp);
+        logEvent.put('MSG__c', log.msg);
+        logEvent.put('TRC__c', String.valueOf(log.trc));
+        return logEvent;
     }
 
     public class LoggerSetting {

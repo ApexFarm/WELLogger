@@ -23,6 +23,6 @@ export default class WelLogTerminalList extends LightningElement {
     }
 
     renderedCallback() {
-        this.scroll();
+        // this.scroll();
     }
 }
