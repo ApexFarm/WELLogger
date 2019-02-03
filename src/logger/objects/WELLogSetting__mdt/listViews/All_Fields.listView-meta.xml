@@ -3,6 +3,7 @@
     <fullName>All_Fields</fullName>
     <columns>MasterLabel</columns>
     <columns>Enabled__c</columns>
+    <columns>Logging_Level_Object__c</columns>
     <columns>Logging_Level_Event__c</columns>
     <columns>Logging_Level_Debug__c</columns>
     <filterScope>Everything</filterScope>

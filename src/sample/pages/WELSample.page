@@ -1,5 +1,4 @@
 <apex:page name="WELSample" controller="WELSampleController">
-  <apex:includeScript value="{!URLFOR($Resource.WELLogger, 'wellogger.js')}"/>
   <h1>Congratulations</h1>
   <script>
     Visualforce.remoting.Manager.invokeAction(
@@ -7,11 +6,6 @@
       'value 1',
       123.45,
       function(result, event){
-        if (event.status) {
-          wellogger(result.logs);
-        } else {
-          console.log(event);
-        }
       },
       {escape: true}
     );

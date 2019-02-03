@@ -5,8 +5,11 @@ public with sharing class WELLogger {
     @TestVisible
     private static final Map<String, ILogger> LOGGER_CACHE;
     @TestVisible
-    private static final List<Log> LOG_QUEUE;
-    private static final Type logEventType = Type.forName('WELLog__e');
+    private static final List<Log> LOG_QUEUE_EVENT;
+    @TestVisible
+    private static final List<Log> LOG_QUEUE_OBJECT;
+    private static final Type logEventType = Type.forName('WELLogEvent__e');
+    private static final Type logObjectType = Type.forName('WELLog__c');
 
     private static final String LOGGER_NAME_DEFAULT = 'default';
     @TestVisible
@@ -19,7 +22,8 @@ public with sharing class WELLogger {
         LOGGING_LEVEL_CACHE = new Map<String, LoggingLevel>();
         LOGGER_SETTING_CACHE = new Map<String, LoggerSetting>();
         LOGGER_CACHE = new Map<String, Logger>();
-        LOG_QUEUE = new List<Log>();
+        LOG_QUEUE_EVENT = new List<Log>();
+        LOG_QUEUE_OBJECT = new List<Log>();
 
         loadLoggingLevelMap();
         loadLoggerSettings();
@@ -28,6 +32,7 @@ public with sharing class WELLogger {
             DEFAULT_LOGGER_SETTING = LOGGER_SETTING_CACHE.get(LOGGER_NAME_DEFAULT);
         } else {
             DEFAULT_LOGGER_SETTING = new LoggerSetting();
+            DEFAULT_LOGGER_SETTING.loggingLevelObject = LoggingLevel.NONE;
             DEFAULT_LOGGER_SETTING.loggingLevelEvent = LoggingLevel.NONE;
             DEFAULT_LOGGER_SETTING.loggingLevelDebug = LoggingLevel.DEBUG;
             DEFAULT_LOGGER_SETTING.enabled = true;
@@ -51,6 +56,7 @@ public with sharing class WELLogger {
             SELECT
                 MasterLabel,
                 Enabled__c,
+                Logging_Level_Object__c,
                 Logging_Level_Event__c,
                 Logging_Level_Debug__c
             FROM WELLogSetting__mdt
@@ -123,30 +129,41 @@ public with sharing class WELLogger {
     }
 
     public static void save() {
-        if (!LOG_QUEUE.isEmpty()) {
+        if (!LOG_QUEUE_EVENT.isEmpty()) {
             if (logEventType != null) {
                 List<sObject> logs = new List<sObject>();
-                for (Log log : LOG_QUEUE) {
-                    logs.add(buildEvent(log));
+                for (Log log : LOG_QUEUE_EVENT) {
+                    logs.add(buildLog(log, logObjectType));
                 }
                 Eventbus.publish(logs);
+                LOG_QUEUE_EVENT.clear();
             }
+        }
 
-            LOG_QUEUE.clear();
+        if (!LOG_QUEUE_OBJECT.isEmpty()) {
+            if (logObjectType != null) {
+                List<sObject> logs = new List<sObject>();
+                for (Log log : LOG_QUEUE_Object) {
+                    logs.add(buildLog(log, logObjectType));
+                }
+                Database.insert(logs, false);
+                LOG_QUEUE_Object.clear();
+            }
         }
     }
 
-    private static sObject buildEvent(Log log) {
-        SObject logEvent = (SObject)logEventType.newInstance();
-        logEvent.put('TST__c', log.tst);
-        logEvent.put('LVL__c', log.lvl);
-        logEvent.put('NSP__c', log.nsp);
-        logEvent.put('MSG__c', log.msg);
-        logEvent.put('TRC__c', String.valueOf(log.trc));
-        return logEvent;
+    private static sObject buildLog(Log log, Type logType) {
+        SObject logInstance = (SObject)logEventType.newInstance();
+        logInstance.put('TST__c', log.tst);
+        logInstance.put('LVL__c', log.lvl);
+        logInstance.put('NSP__c', log.nsp);
+        logInstance.put('MSG__c', log.msg);
+        logInstance.put('TRC__c', String.valueOf(log.trc));
+        return logInstance;
     }
 
     public class LoggerSetting {
+        public LoggingLevel loggingLevelObject { get; set; }
         public LoggingLevel loggingLevelEvent { get; set; }
         public LoggingLevel loggingLevelDebug { get; set; }
         public Boolean enabled { get; set; }
@@ -158,9 +175,11 @@ public with sharing class WELLogger {
         public LoggerSetting(WELLogSetting__mdt setting) {
             enabled = setting.Enabled__c;
             if (enabled) {
+                loggingLevelObject = LOGGING_LEVEL_CACHE.get(setting.Logging_Level_Object__c);
                 loggingLevelEvent = LOGGING_LEVEL_CACHE.get(setting.Logging_Level_Event__c);
                 loggingLevelDebug = LOGGING_LEVEL_CACHE.get(setting.Logging_Level_Debug__c);
             } else {
+                loggingLevelObject = LoggingLevel.NONE;
                 loggingLevelEvent = LoggingLevel.NONE;
                 loggingLevelDebug = LoggingLevel.NONE;
             }
@@ -217,10 +236,16 @@ public with sharing class WELLogger {
             }
 
             Log log = new Log(logLvl, this.namespace, message, trace);
+            if (this.setting.loggingLevelObject != LoggingLevel.NONE
+                && logLvl != LoggingLevel.NONE
+                && logLvl.ordinal() >= this.setting.loggingLevelObject.ordinal()) {
+                LOG_QUEUE_OBJECT.add(log);
+            }
+
             if (this.setting.loggingLevelEvent != LoggingLevel.NONE
                 && logLvl != LoggingLevel.NONE
-                && logLvl.ordinal() >= this.setting.loggingLevelEvent.ordinal() ) {
-                LOG_QUEUE.add(log);
+                && logLvl.ordinal() >= this.setting.loggingLevelEvent.ordinal()) {
+                LOG_QUEUE_EVENT.add(log);
             }
 
             if (this.setting.loggingLevelDebug != LoggingLevel.NONE
@@ -231,11 +256,11 @@ public with sharing class WELLogger {
         }
 
         protected void addLog(Log log) {
-            LOG_QUEUE.add(log);
+            LOG_QUEUE_EVENT.add(log);
         }
 
         protected void addAllLogs(List<Log> logs) {
-            LOG_QUEUE.addAll(logs);
+            LOG_QUEUE_EVENT.addAll(logs);
         }
     }
 

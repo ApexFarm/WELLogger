@@ -14,4 +14,8 @@
         <field>Logging_Level_Event__c</field>
         <value xsi:type="xsd:string">DEBUG</value>
     </values>
+    <values>
+        <field>Logging_Level_Object__c</field>
+        <value xsi:type="xsd:string">ERROR</value>
+    </values>
 </CustomMetadata>
