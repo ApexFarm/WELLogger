@@ -26,7 +26,7 @@
     },
 
     subscribe: function() {
-        return this.empApi.subscribe('/event/WELLog__e', 1672, $A.getCallback(logEvent => {
+        return this.empApi.subscribe('/event/WELLogEvent__e', 1672, $A.getCallback(logEvent => {
             this.logContainer.addLogEvent(logEvent);
         }))
         .then(subscription => {

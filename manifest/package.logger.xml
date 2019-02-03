@@ -6,7 +6,7 @@
         <name>ApexClass</name>
     </types>
     <types>
-        <members>WELLog__e</members>
+        <members>WELLog__c</members>
         <members>WELLogSetting__mdt</members>
         <name>CustomObject</name>
     </types>

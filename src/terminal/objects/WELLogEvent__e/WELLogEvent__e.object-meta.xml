@@ -2,5 +2,5 @@
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
     <deploymentStatus>Deployed</deploymentStatus>
     <eventType>HighVolume</eventType>
-    <label>WELLog</label>
+    <label>WELLog Event</label>
 </CustomObject>

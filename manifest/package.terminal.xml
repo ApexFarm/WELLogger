@@ -16,6 +16,10 @@
         <name>LightningComponentBundle</name>
     </types>
     <types>
+        <members>WELLogEvent__e</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
         <members>WELLogViewer</members>
         <name>StaticResource</name>
     </types>

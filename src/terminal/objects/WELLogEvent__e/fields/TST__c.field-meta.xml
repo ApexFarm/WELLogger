@@ -5,7 +5,7 @@
     <isFilteringDisabled>false</isFilteringDisabled>
     <isNameField>false</isNameField>
     <isSortingDisabled>false</isSortingDisabled>
-    <label>TST</label>
+    <label>Timestamp</label>
     <precision>13</precision>
     <required>false</required>
     <scale>0</scale>
