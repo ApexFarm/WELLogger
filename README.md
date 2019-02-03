@@ -1,5 +1,7 @@
 # Well Logger
 
+*NOTE*: WELLogger 2.0 is comming soon. It is based on the platform event, and Lightning Web Component (LWC). API output type will be removed and replaced by the Event output. A nice backend terminal is developed with LWC for you to view logs in live. Database output will be renamed to Object vs Event. Checkout it out in develop branch.
+
 WELLogger is a thin wrapper around Salesforce Apex `System.debug`. It aims to pretty format objects for classes such as Exception, and HttpResponse etc automatically.
 ```java
 System.debug(ex.getMessage() + ': ' + ex.getStackTrackMessage()); // no more this
