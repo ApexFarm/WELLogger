@@ -1,11 +1,13 @@
 :host {
+    position: relative;
     display: block;
+    padding-right: 15px;
     background-color: #1E1E1E;
     color: #D4D4D4;
-    box-shadow: 0 5px 5px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 3px 3px 0px rgba(0,0,0,0.5);
 }
 
 .right {
+    display: block;
     float: right;
-    display: inline-block;
 }

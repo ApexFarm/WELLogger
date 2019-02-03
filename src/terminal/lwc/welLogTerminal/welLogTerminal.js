@@ -6,7 +6,20 @@ export default class WelLogTerminal extends LightningElement {
     @api isSubscribing = false;
     @api isFullscreen = false;
     @track isScrollLocked = false;
+    @track showErrorOnly = false;
+    @track showWarningOnly = false;
     isResourceLoaded = false;
+
+    get levelFilterClass() {
+        if (this.showErrorOnly && this.showWarningOnly) {
+            return 'ERROR WARN';
+        } else if (this.showErrorOnly) {
+            return 'ERROR';
+        } else if (this.showWarningOnly) {
+            return 'WARN';
+        }
+        return 'ALL';
+    }
 
     toggleScrollLock() {
         this.isScrollLocked = !this.isScrollLocked;
@@ -24,6 +37,18 @@ export default class WelLogTerminal extends LightningElement {
         this.dispatchEvent(new CustomEvent('togglefullscreen', {
             detail: { event },
         }));
+    }
+
+    handleClearOutput() {
+        this.template.querySelector('c-wel-log-terminal-list').clearOutput();
+    }
+
+    toggleErrors() {
+        this.showErrorOnly = !this.showErrorOnly;
+    }
+
+    toggleWarnings() {
+        this.showWarningOnly = !this.showWarningOnly;
     }
 
     connectedCallback() {

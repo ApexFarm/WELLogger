@@ -1,6 +1,13 @@
 <template>
     <c-wel-log-header>
         <c-wel-log-footer-toggle
+            class="wel-in-header"
+            false-class="fas fa-trash-alt"
+            false-title="Clear Output"
+            onclick={handleClearOutput}>
+        </c-wel-log-footer-toggle>
+        <c-wel-log-footer-toggle
+            class="wel-in-header"
             is-active={isScrollLocked}
             true-class="fas fa-lock"
             true-title="Toggle Scroll Lock"
@@ -9,6 +16,7 @@
             onclick={toggleScrollLock}>
         </c-wel-log-footer-toggle>
         <c-wel-log-footer-toggle
+            class="wel-in-header"
             is-active={isFullscreen}
             true-class="fas fa-window-minimize"
             true-title="Restore Window Size"
@@ -18,10 +26,24 @@
         </c-wel-log-footer-toggle>
     </c-wel-log-header>
     <c-wel-log-terminal-list
+        class={levelFilterClass}
         is-scroll-locked={isScrollLocked}>
     </c-wel-log-terminal-list>
     <c-wel-log-footer>
         <c-wel-log-footer-toggle
+            class="wel-in-footer"
+            false-class="fas fa-times-circle"
+            false-title="x Errors"
+            onclick={toggleErrors}>
+        </c-wel-log-footer-toggle>
+        <c-wel-log-footer-toggle
+            class="wel-in-footer"
+            false-class="fas fa-exclamation-triangle"
+            false-title="x Warnings"
+            onclick={toggleWarnings}>
+        </c-wel-log-footer-toggle>
+        <c-wel-log-footer-toggle
+            class="wel-in-footer"
             is-active={isSubscribing}
             true-class="fas fa-pause-circle"
             true-title="Toggle Subscription"

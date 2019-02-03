@@ -2,7 +2,7 @@
     <ul>
         <template for:each={logEvents} for:item="logEvent">
             <li key={logEvent.data.event.replayId}>
-                <c-wel-log-terminal-list-item item={logEvent}>
+                <c-wel-log-terminal-list-item item={logEvent} class={logEvent.data.payload.LVL__c}>
                 </c-wel-log-terminal-list-item>
             </li>
         </template>

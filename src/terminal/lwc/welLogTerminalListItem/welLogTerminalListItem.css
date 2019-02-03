@@ -15,13 +15,15 @@
 }
 
 .line {
-    padding: 0 5px;
+    padding: 0 5px 0 20px;
     border-left-width: 3px;
     border-left-style: solid;
+    text-indent: -15px;
 }
 
-    .line:hover {
+    .line:focus {
         background-color: rgba(102, 102, 102, 0.3);
+        outline-width: 0;
     }
 
     .NONE, .FINE, .DEBUG {

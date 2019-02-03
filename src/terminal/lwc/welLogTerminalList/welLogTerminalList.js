@@ -7,6 +7,10 @@ export default class WelLogTerminalList extends LightningElement {
     @track logEvents = [];
     @wire(CurrentPageReference) pageRef;
 
+    @api clearOutput() {
+        this.logEvents.length = 0;
+    }
+
     scroll() {
         if (!this.isScrollLocked) {
             const li = this.template.querySelector('li:last-child');

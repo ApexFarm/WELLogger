@@ -2,11 +2,32 @@
     display: block;
     background-color: #1E1E1E;
     color: #D4D4D4;
+
     overflow-y: scroll;
     overflow-x: hidden;
 }
 
-ul {
-    list-style: none;
-    margin: 0;
-}
+    ul {
+        margin: 0 15px 0 0;
+        border-right: 1px solid #333333;
+        min-height: 100%;
+
+        list-style: none;
+        line-height: 20px;
+    }
+
+        :host c-wel-log-terminal-list-item {
+            display: none;
+        }
+
+        :host(.ALL) c-wel-log-terminal-list-item {
+            display: list-item;
+        }
+
+        :host(.ERROR) c-wel-log-terminal-list-item.E {
+            display: list-item;
+        }
+
+        :host(.WARN) c-wel-log-terminal-list-item.W {
+            display: list-item;
+        }

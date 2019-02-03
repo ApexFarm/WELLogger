@@ -1,14 +1,18 @@
-i {
-    padding: 0 10px;
+:host(.wel-in-header) i {
+    font-size: 16px;
+    line-height: 36px;
+}
+
+:host(.wel-in-footer) i {
     font-size: 14px;
     line-height: 24px;
+}
+
+i {
+    padding: 0 10px;
     color: #f3f3f3;
 }
 
-i:last-child {
-    padding-right: 20xp;
-}
-
-i:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
+    i:hover {
+        background-color: rgba(243, 243, 243, 0.2);
+    }
