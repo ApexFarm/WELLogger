@@ -6,6 +6,7 @@ public with sharing class WELLogger {
     private static final Map<String, ILogger> LOGGER_CACHE;
     @TestVisible
     private static final List<Log> LOG_QUEUE;
+    private static final Type logEventType = Type.forName('WELLog__e');
 
     private static final String LOGGER_NAME_DEFAULT = 'default';
     @TestVisible
@@ -27,6 +28,7 @@ public with sharing class WELLogger {
             DEFAULT_LOGGER_SETTING = LOGGER_SETTING_CACHE.get(LOGGER_NAME_DEFAULT);
         } else {
             DEFAULT_LOGGER_SETTING = new LoggerSetting();
+            DEFAULT_LOGGER_SETTING.loggingLevelDatabase = LoggingLevel.NONE;
             DEFAULT_LOGGER_SETTING.loggingLevelEvent = LoggingLevel.NONE;
             DEFAULT_LOGGER_SETTING.loggingLevelDebug = LoggingLevel.DEBUG;
             DEFAULT_LOGGER_SETTING.enabled = true;
@@ -123,7 +125,6 @@ public with sharing class WELLogger {
 
     public static void save() {
         if (!LOG_QUEUE.isEmpty()) {
-            Type logEventType = Type.forName('WELLog__e');
             if (logEventType != null) {
                 List<sObject> logs = new List<sObject>();
                 for (Log log : LOG_QUEUE) {

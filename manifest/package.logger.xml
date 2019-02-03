@@ -15,16 +15,5 @@
         <members>WELLogSetting.default</members>
         <name>CustomMetadata</name>
     </types>
-    <types>
-        <members>welLogEventContainer</members>
-        <members>welLogEventList</members>
-        <members>welLogEventItem</members>
-        <members>welLogEventFootbar</members>
-        <name>LightningComponentBundle</name>
-    </types>
-    <types>
-        <members>WELLogger</members>
-        <name>StaticResource</name>
-    </types>
     <version>45.0</version>
 </Package>

@@ -2,8 +2,6 @@ public with sharing class WELSampleController {
     private static WELLogger.ILogger logger = WELLogger.get('sample:controller');
 
     public class Response {
-        @AuraEnabled
-        Object logs { get; set; }
     }
 
     @RemoteAction

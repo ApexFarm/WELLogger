@@ -5,12 +5,14 @@
         <name>AuraDefinitionBundle</name>
     </types>
     <types>
+        <members>welLogContainer</members>
+        <members>welLogHeader</members>
         <members>welLogTerminal</members>
         <members>welLogTerminalList</members>
         <members>welLogTerminalListItem</members>
-        <members>welLogTerminalFooter</members>
         <members>welLogFooter</members>
-        <members>welLogFooterButton</members>
+        <members>welLogFooterToggle</members>
+        <members>welLogPubsub</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>
