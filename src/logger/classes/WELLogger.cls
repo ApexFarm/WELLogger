@@ -8,8 +8,8 @@ public with sharing class WELLogger {
     private static final List<Log> LOG_QUEUE_EVENT;
     @TestVisible
     private static final List<Log> LOG_QUEUE_OBJECT;
-    private static final Type logEventType = Type.forName('WELLogEvent__e');
-    private static final Type logObjectType = Type.forName('WELLog__c');
+    private static final Type LOG_TYPE_EVENT = Type.forName('WELLogEvent__e');
+    private static final Type LOG_TYPE_OBJECT = Type.forName('WELLog__c');
 
     private static final String LOGGER_NAME_DEFAULT = 'default';
     @TestVisible
@@ -129,37 +129,32 @@ public with sharing class WELLogger {
     }
 
     public static void save() {
-        if (!LOG_QUEUE_EVENT.isEmpty()) {
-            if (logEventType != null) {
-                List<sObject> logs = new List<sObject>();
-                for (Log log : LOG_QUEUE_EVENT) {
-                    logs.add(buildLog(log, logObjectType));
-                }
-                Eventbus.publish(logs);
-                LOG_QUEUE_EVENT.clear();
-            }
-        }
-
-        if (!LOG_QUEUE_OBJECT.isEmpty()) {
-            if (logObjectType != null) {
-                List<sObject> logs = new List<sObject>();
-                for (Log log : LOG_QUEUE_Object) {
-                    logs.add(buildLog(log, logObjectType));
-                }
-                Database.insert(logs, false);
-                LOG_QUEUE_Object.clear();
-            }
-        }
+        saveLogs(LOG_QUEUE_EVENT, LOG_TYPE_EVENT, true);
+        saveLogs(LOG_QUEUE_OBJECT, LOG_TYPE_OBJECT, false);
     }
 
-    private static sObject buildLog(Log log, Type logType) {
-        SObject logInstance = (SObject)logEventType.newInstance();
-        logInstance.put('TST__c', log.tst);
-        logInstance.put('LVL__c', log.lvl);
-        logInstance.put('NSP__c', log.nsp);
-        logInstance.put('MSG__c', log.msg);
-        logInstance.put('TRC__c', String.valueOf(log.trc));
-        return logInstance;
+    private static void saveLogs(List<Log> logQueue, Type logType, Boolean isEvent) {
+        if (!logQueue.isEmpty()) {
+            if (logType != null) {
+                List<sObject> logList = new List<sObject>();
+                SObject logObj;
+                for (Log log : logQueue) {
+                    logObj = (SObject)logType.newInstance();
+                    logObj.put('TST__c', log.tst);
+                    logObj.put('LVL__c', log.lvl);
+                    logObj.put('NSP__c', log.nsp);
+                    logObj.put('MSG__c', log.msg);
+                    logObj.put('TRC__c', String.valueOf(log.trc));
+                    logList.add(logObj);
+                }
+                if (isEvent) {
+                    Eventbus.publish(logList);
+                } else {
+                    Database.insert(logList, true);
+                }
+                logQueue.clear();
+            }
+        }
     }
 
     public class LoggerSetting {
@@ -267,7 +262,7 @@ public with sharing class WELLogger {
     public virtual class Log {
         @TestVisible
         @AuraEnabled
-        protected Long tst { get; private set; }
+        protected Decimal tst { get; private set; }
         @TestVisible
         @AuraEnabled
         protected String lvl { get; private set; }
