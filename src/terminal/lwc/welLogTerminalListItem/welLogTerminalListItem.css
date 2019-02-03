@@ -26,6 +26,11 @@
         outline-width: 0;
     }
 
+    .line.ERROR:focus {
+        background-color: rgba(244, 71, 71, 0.3);
+        outline-width: 0;
+    }
+
     .NONE, .FINE, .DEBUG {
         border-left-color:  #333333;
     }
