@@ -2,7 +2,7 @@ import { LightningElement, api, track } from 'lwc';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import resource from '@salesforce/resourceUrl/WELLogViewer';
 
-export default class WelLogTerminal extends LightningElement {
+export default class WelLogEventView extends LightningElement {
     @api isSubscribing = false;
     @api isFullscreen = false;
     @track isScrollLocked = false;

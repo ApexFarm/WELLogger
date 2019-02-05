@@ -2,7 +2,7 @@ import { LightningElement, api, track, wire } from 'lwc';
 import { registerListener, unregisterAllListeners } from 'c/welLogPubsub';
 import { CurrentPageReference } from 'lightning/navigation';
 
-export default class WelLogTerminalList extends LightningElement {
+export default class WelLogEventList extends LightningElement {
     @api isScrollLocked = false;
     @track logEvents = [];
     @wire(CurrentPageReference) pageRef;

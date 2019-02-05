@@ -1,16 +1,16 @@
 import { LightningElement, api } from 'lwc';
 
-export default class WelLogTerminalListItem extends LightningElement {
-    static tzoffset = (new Date()).getTimezoneOffset() * 60000;
-    static lvlMap = {
-        'D': 'DEBUG',
-        'I': 'INFO',
-        'W': 'WARN',
-        'E': 'ERROR',
-        'F': 'FINE',
-        'N': 'NONE',
-    };
+const tzoffset = (new Date()).getTimezoneOffset() * 60000;
+const lvlMap = {
+    'D': 'DEBUG',
+    'I': 'INFO',
+    'W': 'WARN',
+    'E': 'ERROR',
+    'F': 'FINE',
+    'N': 'NONE',
+};
 
+export default class WelLogEventListItem extends LightningElement {
     replayId;
     level;
     time;
@@ -22,8 +22,8 @@ export default class WelLogTerminalListItem extends LightningElement {
         this.logEvent = logEvent;
         this.replayId = event.replayId;
         this.log = log;
-        this.level = WelLogTerminalListItem.lvlMap[log.LVL__c];
-        this.time = (new Date(log.TST__c - WelLogTerminalListItem.tzoffset))
+        this.level = lvlMap[log.LVL__c];
+        this.time = (new Date(log.TST__c - tzoffset))
             .toISOString().slice(11, -1);
     }
 

@@ -16,18 +16,18 @@
         line-height: 20px;
     }
 
-        :host c-wel-log-terminal-list-item {
+        :host c-wel-log-event-list-item {
             display: none;
         }
 
-        :host(.ALL) c-wel-log-terminal-list-item {
+        :host(.ALL) c-wel-log-event-list-item {
             display: list-item;
         }
 
-        :host(.ERROR) c-wel-log-terminal-list-item.E {
+        :host(.ERROR) c-wel-log-event-list-item.E {
             display: list-item;
         }
 
-        :host(.WARN) c-wel-log-terminal-list-item.W {
+        :host(.WARN) c-wel-log-event-list-item.W {
             display: list-item;
         }

@@ -9,6 +9,15 @@
             "c/wel-log-container": [
                 "welLogContainer/welLogContainer.js"
             ],
+            "c/wel-log-event-list": [
+                "welLogEventList/welLogEventList.js"
+            ],
+            "c/wel-log-event-list-item": [
+                "welLogEventListItem/welLogEventListItem.js"
+            ],
+            "c/wel-log-event-view": [
+                "welLogEventView/welLogEventView.js"
+            ],
             "c/wel-log-footer": [
                 "welLogFooter/welLogFooter.js"
             ],
@@ -20,15 +29,6 @@
             ],
             "c/wel-log-select": [
                 "welLogSelect/welLogSelect.js"
-            ],
-            "c/wel-log-terminal": [
-                "welLogTerminal/welLogTerminal.js"
-            ],
-            "c/wel-log-terminal-list": [
-                "welLogTerminalList/welLogTerminalList.js"
-            ],
-            "c/wel-log-terminal-list-item": [
-                "welLogTerminalListItem/welLogTerminalListItem.js"
             ]
         }
     },
