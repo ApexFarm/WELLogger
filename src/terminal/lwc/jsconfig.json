@@ -3,14 +3,14 @@
         "experimentalDecorators": true,
         "baseUrl": ".",
         "paths": {
+            "c/wel-log-button": [
+                "welLogButton/welLogButton.js"
+            ],
             "c/wel-log-container": [
                 "welLogContainer/welLogContainer.js"
             ],
             "c/wel-log-footer": [
                 "welLogFooter/welLogFooter.js"
-            ],
-            "c/wel-log-footer-toggle": [
-                "welLogFooterToggle/welLogFooterToggle.js"
             ],
             "c/wel-log-header": [
                 "welLogHeader/welLogHeader.js"

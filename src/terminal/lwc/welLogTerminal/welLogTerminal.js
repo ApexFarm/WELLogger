@@ -8,6 +8,8 @@ export default class WelLogTerminal extends LightningElement {
     @track isScrollLocked = false;
     @track showErrorOnly = false;
     @track showWarningOnly = false;
+    @track showOutput = true;
+    @track showChart = false;
     isResourceLoaded = false;
 
     get levelFilterClass() {
@@ -19,6 +21,11 @@ export default class WelLogTerminal extends LightningElement {
             return 'WARN';
         }
         return 'ALL';
+    }
+
+    toggleMenu(event) {
+        this.showOutput = event.target.label === 'OUTPUT';
+        this.showChart = event.target.label === 'CHART';
     }
 
     toggleScrollLock() {

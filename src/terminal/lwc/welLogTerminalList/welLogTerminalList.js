@@ -15,7 +15,7 @@ export default class WelLogTerminalList extends LightningElement {
         if (!this.isScrollLocked) {
             const li = this.template.querySelector('li:last-child');
             if (li) {
-                li.scrollIntoViewIfNeeded();
+                li.scrollIntoView(false);
             }
         }
     }
@@ -35,6 +35,6 @@ export default class WelLogTerminalList extends LightningElement {
     }
 
     renderedCallback() {
-        // this.scroll();
+        this.scroll();
     }
 }

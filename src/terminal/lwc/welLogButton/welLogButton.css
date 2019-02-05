@@ -1,0 +1,34 @@
+:host {
+    display: inline-block;
+    padding: 0 10px;
+    font-size: 12px;
+    color: #f3f3f3;
+}
+
+    :host i {
+        font-size: 14px;
+    }
+
+    :host:hover {
+        background-color: rgba(243, 243, 243, 0.2);
+    }
+
+
+:host(.wel-in-header) {
+    line-height: 32px;
+}
+
+:host(.wel-in-footer) {
+    line-height: 22px;
+}
+
+:host(.wel-in-header.menu) > .button {
+    display: inline-block;
+    color: #666666;
+}
+
+    :host(.wel-in-header.menu) > .active {
+        color: #f3f3f3;
+        line-height: 28px;
+        border-bottom: 1px solid #666666;
+    }
