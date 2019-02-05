@@ -10,6 +10,7 @@ export default class WelLogTerminal extends LightningElement {
     @track showWarningOnly = false;
     @track showOutput = true;
     @track showChart = false;
+    @track modules = ['main', 'sample', 'test'];
     isResourceLoaded = false;
 
     get levelFilterClass() {

@@ -18,6 +18,9 @@
             "c/wel-log-pubsub": [
                 "welLogPubsub/welLogPubsub.js"
             ],
+            "c/wel-log-select": [
+                "welLogSelect/welLogSelect.js"
+            ],
             "c/wel-log-terminal": [
                 "welLogTerminal/welLogTerminal.js"
             ],
