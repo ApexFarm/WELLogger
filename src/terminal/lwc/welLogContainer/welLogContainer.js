@@ -1,17 +1,15 @@
-import { LightningElement, api, track, wire } from 'lwc';
-import { CurrentPageReference } from 'lightning/navigation';
-import { fireEvent } from 'c/welLogPubsub';
+import { LightningElement, api, track } from 'lwc';
+import { store, recieveLogEvent } from 'c/welLogRedux';
 
 export default class WelLogContainer extends LightningElement {
     @api isSubscribing = false;
     @api height = 260;
     @track isFullscreen = false;
     @track shouldAnimating = false;
-    @wire(CurrentPageReference) pageRef;
 
     @api addLogEvent(logEvent) {
         if (logEvent != null) {
-            fireEvent(this.pageRef, 'logEventAdded', logEvent);
+            store.dispatch(recieveLogEvent(logEvent));
         }
     }
 

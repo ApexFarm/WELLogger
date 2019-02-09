@@ -1,0 +1,21 @@
+{
+    "extends": "@salesforce/eslint-config-lwc/recommended",
+    "rules": {
+        "vars-on-top": "off",
+        "no-return-assign": "off",
+        "no-shadow": "off",
+        "no-void": "off",
+        "no-new-func": "off",
+        "no-loop-func": "off",
+        "no-sequences": "off",
+        "consistent-return": "off",
+        "no-useless-concat": "off",
+        "wrap-iife": "off",
+        "no-else-return": "off",
+        "no-self-compare": "off",
+        "no-use-before-define": "off",
+        "radix": "off",
+        "no-unused-expressions": "off",
+        "no-undef": "off"
+    }
+}

@@ -24,8 +24,8 @@
             "c/wel-log-header": [
                 "welLogHeader/welLogHeader.js"
             ],
-            "c/wel-log-pubsub": [
-                "welLogPubsub/welLogPubsub.js"
+            "c/wel-log-redux": [
+                "welLogRedux/welLogRedux.js"
             ],
             "c/wel-log-select": [
                 "welLogSelect/welLogSelect.js"

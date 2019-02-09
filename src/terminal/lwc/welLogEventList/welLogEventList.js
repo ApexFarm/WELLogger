@@ -1,11 +1,10 @@
-import { LightningElement, api, track, wire } from 'lwc';
-import { registerListener, unregisterAllListeners } from 'c/welLogPubsub';
-import { CurrentPageReference } from 'lightning/navigation';
+import { LightningElement, api, track } from 'lwc';
+import { store } from 'c/welLogRedux';
 
 export default class WelLogEventList extends LightningElement {
     @api isScrollLocked = false;
     @track logEvents = [];
-    @wire(CurrentPageReference) pageRef;
+    unsubscribe;
 
     @api clearOutput() {
         this.logEvents.length = 0;
@@ -20,18 +19,15 @@ export default class WelLogEventList extends LightningElement {
         }
     }
 
-    handleLogEventAdded(logEvent) {
-        if (logEvent != null) {
-            this.logEvents.push(logEvent);
-        }
-    }
-
     connectedCallback() {
-        registerListener('logEventAdded', this.handleLogEventAdded, this);
+        this.unsubscribe = store.subscribe(() => {
+            let { logEvents } = store.getState();
+            this.logEvents = logEvents.items;
+        });
     }
 
     disconnectedCallback() {
-        unregisterAllListeners(this);
+        this.unsubscribe();
     }
 
     renderedCallback() {
