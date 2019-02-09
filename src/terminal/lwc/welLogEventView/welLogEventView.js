@@ -1,24 +1,25 @@
 import { LightningElement, api, track } from 'lwc';
-import { loadStyle } from 'lightning/platformResourceLoader';
-import resource from '@salesforce/resourceUrl/WELLogViewer';
+import { store, fitlerByErrors, fitlerByWarnings, selectModule } from 'c/welLogRedux';
 
 export default class WelLogEventView extends LightningElement {
     @api isSubscribing = false;
     @api isFullscreen = false;
     @track isScrollLocked = false;
-    @track showErrorOnly = false;
-    @track showWarningOnly = false;
     @track showOutput = true;
     @track showChart = false;
-    @track modules = ['main', 'sample', 'test'];
-    isResourceLoaded = false;
+    @track moduleNames;
+    @track filterErrorsOnly;
+    @track filterWarningsOnly;
+    @track warnings;
+    @track errors;
+    unsubscribe;
 
     get levelFilterClass() {
-        if (this.showErrorOnly && this.showWarningOnly) {
+        if (this.filterErrorsOnly && this.filterWarningsOnly) {
             return 'ERROR WARN';
-        } else if (this.showErrorOnly) {
+        } else if (this.filterErrorsOnly) {
             return 'ERROR';
-        } else if (this.showWarningOnly) {
+        } else if (this.filterWarningsOnly) {
             return 'WARN';
         }
         return 'ALL';
@@ -52,21 +53,30 @@ export default class WelLogEventView extends LightningElement {
     }
 
     toggleErrors() {
-        this.showErrorOnly = !this.showErrorOnly;
+        store.dispatch(fitlerByErrors());
     }
 
     toggleWarnings() {
-        this.showWarningOnly = !this.showWarningOnly;
+        store.dispatch(fitlerByWarnings());
+    }
+
+    selectModule(event) {
+        store.dispatch(selectModule(event.detail));
     }
 
     connectedCallback() {
-        if (this.isResourceLoaded) {
-            return;
-        }
-        this.isResourceLoaded = true;
+        this.unsubscribe = store.subscribe(() => {
+            let { logEvents } = store.getState();
+            let { warnings, errors, filters, moduleNames } = logEvents;
+            this.warnings = warnings;
+            this.errors = errors;
+            this.filterErrorsOnly = filters.errorsOnly;
+            this.filterWarningsOnly = filters.warningsOnly;
+            this.moduleNames = moduleNames;
+        });
+    }
 
-        loadStyle(this, resource + '/fontawesome/css/all.min.css')
-        .then(() => {})
-        .catch(() => {});
+    disconnectedCallback() {
+        this.unsubscribe();
     }
 }

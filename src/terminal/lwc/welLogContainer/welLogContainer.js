@@ -1,7 +1,11 @@
 import { LightningElement, api, track } from 'lwc';
 import { store, recieveLogEvent } from 'c/welLogRedux';
+import { loadStyle } from 'lightning/platformResourceLoader';
+import resource from '@salesforce/resourceUrl/WELLogViewer';
 
 export default class WelLogContainer extends LightningElement {
+    static isResourceLoaded = false;
+
     @api isSubscribing = false;
     @api height = 260;
     @track isFullscreen = false;
@@ -71,5 +75,16 @@ export default class WelLogContainer extends LightningElement {
     toggleFullscreen() {
         this.isFullscreen = !this.isFullscreen;
         this.shouldAnimating = true;
+    }
+
+    connectedCallback() {
+        if (WelLogContainer.isResourceLoaded) {
+            return;
+        }
+        WelLogContainer.isResourceLoaded = true;
+
+        loadStyle(this, resource + '/fontawesome/css/all.min.css')
+        .then(() => {})
+        .catch(() => {});
     }
 }

@@ -1,8 +1,8 @@
 <template>
     <div class={lineClass} tabindex="0">
-        <span class="replayid">{replayId} </span>
+        <span class="replayid">{logEvent.replayId} </span>
         <span class="tst">{time} </span>
-        <span class="nsp">[{log.NSP__c}] </span>
-        <span class="msg">{log.MSG__c} {log.TRC__c}</span>
+        <span class="nsp">[{logEvent.namespace}] </span>
+        <span class="msg">{logEvent.message} {logEvent.trace}</span>
     </div>
 </template>

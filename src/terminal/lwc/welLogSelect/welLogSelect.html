@@ -1,6 +1,5 @@
 <template>
-    <select>
-        <option value={all} selected>all</option>
+    <select onchange={change}>
         <template for:each={options}  for:item="option">
             <option key={option} value={option}>{option}</option>
         </template>

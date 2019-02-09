@@ -11,19 +11,14 @@ const lvlMap = {
 };
 
 export default class WelLogEventListItem extends LightningElement {
-    replayId;
     level;
     time;
-    log;
     logEvent;
 
     @api set item(logEvent) {
-        var { payload:log, event } = logEvent.data;
         this.logEvent = logEvent;
-        this.replayId = event.replayId;
-        this.log = log;
-        this.level = lvlMap[log.LVL__c];
-        this.time = (new Date(log.TST__c - tzoffset))
+        this.level = lvlMap[logEvent.level];
+        this.time = (new Date(logEvent.timestamp - tzoffset))
             .toISOString().slice(11, -1);
     }
 

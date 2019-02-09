@@ -1,5 +1,7 @@
 public with sharing class WELSampleController {
     private static WELLogger.ILogger logger = WELLogger.get('sample:controller');
+    private static WELLogger.ILogger loggerA = WELLogger.get('a:logger');
+    private static WELLogger.ILogger loggerB = WELLogger.get('b:logger');
 
     public class Response {
     }
@@ -13,9 +15,9 @@ public with sharing class WELSampleController {
 
         Response res = new Response();
         try {
-            logger.debug(LoggingLevel.FINE, 'doing lots of uninteresting work');
-            logger.debug(LoggingLevel.INFO, 'doing some work');
-            logger.debug(LoggingLevel.WARN, 'don\'t do this work');
+            WELLogger.debug(LoggingLevel.FINE, 'doing lots of uninteresting work');
+            loggerA.debug(LoggingLevel.INFO, 'doing some work');
+            loggerB.debug(LoggingLevel.WARN, 'don\'t do this work');
             logger.debug('a list of objects', [
                 SELECT
                     MasterLabel,
