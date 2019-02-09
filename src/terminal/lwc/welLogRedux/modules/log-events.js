@@ -1,17 +1,18 @@
 import produce from '../lib/immer';
 
-const RECIEVE = 'wel/log-events/RECIEVE';
+const RECIEVE_LOGS = 'wel/log-events/RECIEVE_LOGS';
 const FILTER_BY_ERRORS = 'wel/log-events/FILTER_BY_ERRORS';
 const FILTER_BY_WARNINGS = 'wel/log-events/FILTER_BY_WARNINGS';
 const SELECT_MODULE = 'wel/log-events/SELECT_MODULE';
+
 const initState = {
     items:[],
     errors: 0,
     warnings: 0,
-    moduleNames: ['all'],
+    moduleNames: ['-- ALL --'],
     moduleNameCache: {},
     filters: {
-        selectedModule: 'all',
+        module: '-- ALL --',
         errorsOnly: false,
         warningsOnly: false
     }
@@ -20,7 +21,7 @@ const initState = {
 export default function reducer(state = initState, action = {}) {
     return produce(state, draft => {
         switch (action.type) {
-            case RECIEVE: {
+            case RECIEVE_LOGS: {
                 const {
                     LVL__c,
                     TST__c,
@@ -40,13 +41,6 @@ export default function reducer(state = initState, action = {}) {
                     replayId: action.payload.data.event.replayId,
                 };
 
-                draft.items.push(eventLog);
-                if (eventLog.level === 'E') {
-                    draft.errors++;
-                } else if (eventLog.level === 'W') {
-                    draft.warnings++;
-                }
-
                 let moduleName = draft.moduleNameCache[eventLog.namespace];
                 if (!moduleName && eventLog.namespace) {
                     let index = eventLog.namespace.indexOf(':');
@@ -61,6 +55,30 @@ export default function reducer(state = initState, action = {}) {
                         draft.moduleNames.push(moduleName);
                     }
                 }
+                eventLog.module = moduleName;
+
+                draft.items.push(eventLog);
+
+                if (draft.filters.module === '-- ALL --'
+                    || draft.filters.module === eventLog.module) {
+                    if (eventLog.level === 'E') {
+                        draft.errors++;
+                    } else if (eventLog.level === 'W') {
+                        draft.warnings++;
+                    }
+                }
+                break;
+            }
+            case SELECT_MODULE: {
+                draft.filters.module = action.payload;
+                draft.errors = draft.items.filter(item =>
+                    (action.payload === '-- ALL --'
+                    || action.payload === item.module)
+                    && item.level === 'E').length;
+                draft.warnings = draft.items.filter(item =>
+                    (action.payload === '-- ALL --'
+                    || action.payload === item.module)
+                    && item.level === 'W').length;
                 break;
             }
             case FILTER_BY_ERRORS: {
@@ -71,16 +89,12 @@ export default function reducer(state = initState, action = {}) {
                 draft.filters.warningsOnly = !draft.filters.warningsOnly;
                 break;
             }
-            case SELECT_MODULE: {
-                draft.filters.selectedModule = action.payload;
-                break;
-            }
         }
     })
 }
 
 export function recieveLogEvent(logEvent) {
-    return { type: RECIEVE, payload: logEvent };
+    return { type: RECIEVE_LOGS, payload: logEvent };
 }
 
 export function fitlerByErrors() {

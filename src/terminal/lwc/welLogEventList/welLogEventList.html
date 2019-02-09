@@ -2,7 +2,10 @@
     <ul>
         <template for:each={logEvents} for:item="logEvent">
             <li key={logEvent.replayId}>
-                <c-wel-log-event-list-item item={logEvent} class={logEvent.level}>
+                <c-wel-log-event-list-item
+                    class={logEvent.level}
+                    item={logEvent}
+                    filter-module={filterModule}>
                 </c-wel-log-event-list-item>
             </li>
         </template>

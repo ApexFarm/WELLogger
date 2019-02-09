@@ -15,7 +15,7 @@ public with sharing class WELSampleController {
 
         Response res = new Response();
         try {
-            WELLogger.debug(LoggingLevel.FINE, 'doing lots of uninteresting work');
+            WELLogger.debug(LoggingLevel.DEBUG, 'doing lots of uninteresting work');
             loggerA.debug(LoggingLevel.INFO, 'doing some work');
             loggerB.debug(LoggingLevel.WARN, 'don\'t do this work');
             logger.debug('a list of objects', [

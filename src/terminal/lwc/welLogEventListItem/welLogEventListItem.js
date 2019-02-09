@@ -11,6 +11,7 @@ const lvlMap = {
 };
 
 export default class WelLogEventListItem extends LightningElement {
+    @api filterModule;
     level;
     time;
     logEvent;
@@ -28,5 +29,13 @@ export default class WelLogEventListItem extends LightningElement {
 
     get lineClass() {
         return `line ${this.level}`;
+    }
+
+    get displayNone() {
+        if (this.filterModule === '-- ALL --'
+            || this.filterModule === this.logEvent.module) {
+            return null;
+        }
+        return 'display:none;';
     }
 }

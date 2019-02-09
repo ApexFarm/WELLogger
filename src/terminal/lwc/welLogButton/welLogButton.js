@@ -35,4 +35,11 @@ export default class WelLogButton extends LightningElement {
     get className() {
         return this.isActive ? 'button active' : 'button';
     }
+
+    get labelString() {
+        if (typeof this.label === 'number') {
+            return String(this.label);
+        }
+        return this.label;
+    }
 }

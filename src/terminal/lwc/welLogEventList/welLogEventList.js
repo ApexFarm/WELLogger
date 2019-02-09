@@ -4,6 +4,7 @@ import { store } from 'c/welLogRedux';
 export default class WelLogEventList extends LightningElement {
     @api isScrollLocked = false;
     @track logEvents = [];
+    @track filterModule;
     unsubscribe;
 
     @api clearOutput() {
@@ -23,6 +24,7 @@ export default class WelLogEventList extends LightningElement {
         this.unsubscribe = store.subscribe(() => {
             let { logEvents } = store.getState();
             this.logEvents = logEvents.items;
+            this.filterModule = logEvents.filters.module;
         });
     }
 

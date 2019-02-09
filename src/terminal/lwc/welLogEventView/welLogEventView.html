@@ -52,27 +52,31 @@
             is-scroll-locked={isScrollLocked}>
         </c-wel-log-event-list>
         <c-wel-log-footer>
-            <c-wel-log-button
-                class="wel-in-footer"
-                icon="fas fa-times-circle"
-                title="Errors"
-                label={errors}
-                onclick={toggleErrors}>
-            </c-wel-log-button>
-            <c-wel-log-button
-                class="wel-in-footer"
-                icon="fas fa-exclamation-triangle"
-                title="Warnings"
-                label={warnings}
-                onclick={toggleWarnings}>
-            </c-wel-log-button>
-            <c-wel-log-button
-                class="wel-in-footer"
-                is-active={isSubscribing}
-                true-icon="fas fa-pause-circle"
-                false-icon="fas fa-play-circle"
-                title="Toggle Subscription"
-                onclick={toggleSubscribe}>
-            </c-wel-log-button>
+            <span slot="left">
+            </span>
+            <span slot="right">
+                <c-wel-log-button
+                    class="wel-in-footer"
+                    icon="fas fa-times-circle"
+                    title="Errors"
+                    label={errors}
+                    onclick={toggleErrors}>
+                </c-wel-log-button>
+                <c-wel-log-button
+                    class="wel-in-footer"
+                    icon="fas fa-exclamation-triangle"
+                    title="Warnings"
+                    label={warnings}
+                    onclick={toggleWarnings}>
+                </c-wel-log-button>
+                <c-wel-log-button
+                    class="wel-in-footer"
+                    is-active={isSubscribing}
+                    true-icon="fas fa-pause-circle"
+                    false-icon="fas fa-play-circle"
+                    title="Toggle Subscription"
+                    onclick={toggleSubscribe}>
+                </c-wel-log-button>
+            </span>
         </c-wel-log-footer>
     </template>

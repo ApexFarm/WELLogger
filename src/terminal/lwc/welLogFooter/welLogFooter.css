@@ -4,6 +4,12 @@
     background-color: #007ACC;
 }
 
-.controls {
+.right {
+    display: block;
     float: right;
+}
+
+.left {
+    display: block;
+    float: left;
 }
