@@ -5,8 +5,8 @@
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
 
     <lightning:empApi aura:id="empApi" />
-    <c:welLogContainer
-        aura:id="logContainer"
+    <c:welLogApp
+        aura:id="logApp"
         height="{!v.height}"
         isSubscribing="{!v.subscription != null}"
         ontogglesubscribe="{!c.toggleSubscription}"/>

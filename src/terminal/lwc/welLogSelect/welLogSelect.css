@@ -1,6 +1,7 @@
 select {
     margin: 0 5px;
     border-style: none;
+    width: 70px;
 
     background-color: #3e3e3e;
     color: #D4D4D4;

@@ -1,15 +1,16 @@
 import { LightningElement, api, track } from 'lwc';
-import { store, recieveLogEvent } from 'c/welLogRedux';
+import { store, recieveLogEvent, __DO_NOT_USE__ActionTypes } from 'c/welLogRedux';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import resource from '@salesforce/resourceUrl/WELLogViewer';
 
-export default class WelLogContainer extends LightningElement {
+export default class WelLogApp extends LightningElement {
     static isResourceLoaded = false;
 
     @api height = 260;
     @api isSubscribing = false;
     @track isFullscreen = false;
     @track shouldAnimating = false;
+    initComponentWithStore = false;
 
     @api addLogEvent(logEvent) {
         if (logEvent != null) {
@@ -78,13 +79,22 @@ export default class WelLogContainer extends LightningElement {
     }
 
     connectedCallback() {
-        if (WelLogContainer.isResourceLoaded) {
+        if (WelLogApp.isResourceLoaded) {
             return;
         }
-        WelLogContainer.isResourceLoaded = true;
+        WelLogApp.isResourceLoaded = true;
 
         loadStyle(this, resource + '/fontawesome/css/all.min.css')
         .then(() => {})
         .catch(() => {});
+    }
+
+    renderedCallback() {
+        if (!this.initComponentWithStore) {
+            store.dispatch({
+                type: __DO_NOT_USE__ActionTypes.INIT
+            });
+            this.initComponentWithStore = true;
+        }
     }
 }

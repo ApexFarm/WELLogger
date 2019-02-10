@@ -1,4 +1,4 @@
-import { createStore, combineReducers } from './lib/redux';
+import { createStore, combineReducers, __DO_NOT_USE__ActionTypes } from './lib/redux';
 import logEvents from './modules/log-events'
 
 const rootReducer = combineReducers({
@@ -7,5 +7,5 @@ const rootReducer = combineReducers({
 
 const store = createStore(rootReducer);
 
-export { store };
+export { store, __DO_NOT_USE__ActionTypes };
 export * from './modules/log-events';

@@ -3,11 +3,11 @@
         "experimentalDecorators": true,
         "baseUrl": ".",
         "paths": {
+            "c/wel-log-app": [
+                "welLogApp/welLogApp.js"
+            ],
             "c/wel-log-button": [
                 "welLogButton/welLogButton.js"
-            ],
-            "c/wel-log-container": [
-                "welLogContainer/welLogContainer.js"
             ],
             "c/wel-log-event-list": [
                 "welLogEventList/welLogEventList.js"
