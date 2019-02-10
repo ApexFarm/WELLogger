@@ -1,16 +1,19 @@
 import produce from '../lib/immer';
+import { selectColor } from '../lib/colors';
 
 const RECIEVE_LOGS = 'wel/log-events/RECIEVE_LOGS';
 const FILTER_BY_ERRORS = 'wel/log-events/FILTER_BY_ERRORS';
 const FILTER_BY_WARNINGS = 'wel/log-events/FILTER_BY_WARNINGS';
 const SELECT_MODULE = 'wel/log-events/SELECT_MODULE';
 
+const moduleNameCache = {};
+const namespaceColorCache = {};
+
 const initState = {
     items:[],
     errors: 0,
     warnings: 0,
     moduleNames: ['-- ALL --'],
-    moduleNameCache: {},
     filters: {
         module: '-- ALL --',
         errorsOnly: false,
@@ -41,21 +44,28 @@ export default function reducer(state = initState, action = {}) {
                     replayId: action.payload.data.event.replayId,
                 };
 
-                let moduleName = draft.moduleNameCache[eventLog.namespace];
+                let moduleName = moduleNameCache[eventLog.namespace];
                 if (!moduleName && eventLog.namespace) {
                     let index = eventLog.namespace.indexOf(':');
                     if (index === -1) {
                         moduleName = eventLog.namespace;
-                        draft.moduleNameCache[eventLog.namespace] = eventLog.namespace;
+                        moduleNameCache[eventLog.namespace] = eventLog.namespace;
                     } else {
                         moduleName = eventLog.namespace.substring(0, index);
-                        draft.moduleNameCache[eventLog.namespace] = moduleName;
+                        moduleNameCache[eventLog.namespace] = moduleName;
                     }
                     if (!draft.moduleNames.includes(moduleName)) {
                         draft.moduleNames.push(moduleName);
                     }
                 }
                 eventLog.module = moduleName;
+
+                let namespaceColor = namespaceColorCache[eventLog.namespace];
+                if (!namespaceColor && eventLog.namespace) {
+                    namespaceColor = selectColor(eventLog.namespace);
+                    namespaceColorCache[eventLog.namespace] = namespaceColor;
+                }
+                eventLog.namespaceColor = namespaceColor;
 
                 draft.items.push(eventLog);
 

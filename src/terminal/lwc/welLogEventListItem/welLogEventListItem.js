@@ -38,4 +38,8 @@ export default class WelLogEventListItem extends LightningElement {
         }
         return 'display:none;';
     }
+
+    get namespaceColor() {
+        return `color: ${this.logEvent.namespaceColor};`;
+    }
 }

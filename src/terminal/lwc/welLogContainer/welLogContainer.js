@@ -6,8 +6,8 @@ import resource from '@salesforce/resourceUrl/WELLogViewer';
 export default class WelLogContainer extends LightningElement {
     static isResourceLoaded = false;
 
-    @api isSubscribing = false;
     @api height = 260;
+    @api isSubscribing = false;
     @track isFullscreen = false;
     @track shouldAnimating = false;
 

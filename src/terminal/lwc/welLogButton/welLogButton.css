@@ -9,6 +9,14 @@
         font-size: 14px;
     }
 
+        :host i.red {
+            color: #f44747;
+        }
+
+        :host i.yellow {
+            color: #d7ba7d;
+        }
+
     :host:hover {
         background-color: rgba(243, 243, 243, 0.2);
     }
@@ -23,11 +31,11 @@
 
 :host(.wel-in-header.menu) > .button {
     display: inline-block;
+    line-height: 28px;
     color: #666666;
 }
 
-    :host(.wel-in-header.menu) > .active {
-        color: #f3f3f3;
-        line-height: 28px;
+    :host(.wel-in-header.menu) > .button.active {
         border-bottom: 1px solid #666666;
+        color: #f3f3f3;
     }
