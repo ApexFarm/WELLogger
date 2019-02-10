@@ -7,10 +7,6 @@ export default class WelLogEventList extends LightningElement {
     @track filterModule;
     unsubscribe;
 
-    @api clearOutput() {
-        this.logEvents.length = 0;
-    }
-
     scroll() {
         if (!this.isScrollLocked) {
             const li = this.template.querySelector('li:last-child');

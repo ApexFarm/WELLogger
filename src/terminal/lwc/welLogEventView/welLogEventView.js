@@ -1,5 +1,5 @@
 import { LightningElement, api, track } from 'lwc';
-import { store, fitlerByErrors, fitlerByWarnings, selectModule } from 'c/welLogRedux';
+import { store, fitlerByErrors, fitlerByWarnings, selectModule, clearAll } from 'c/welLogRedux';
 
 export default class WelLogEventView extends LightningElement {
     @api isSubscribing = false;
@@ -49,7 +49,7 @@ export default class WelLogEventView extends LightningElement {
     }
 
     handleClearOutput() {
-        this.template.querySelector('c-wel-log-terminal-list').clearOutput();
+        store.dispatch(clearAll());
     }
 
     toggleErrors() {

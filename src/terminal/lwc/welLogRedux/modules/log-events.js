@@ -5,6 +5,7 @@ const RECIEVE_LOGS = 'wel/log-events/RECIEVE_LOGS';
 const FILTER_BY_ERRORS = 'wel/log-events/FILTER_BY_ERRORS';
 const FILTER_BY_WARNINGS = 'wel/log-events/FILTER_BY_WARNINGS';
 const SELECT_MODULE = 'wel/log-events/SELECT_MODULE';
+const CLEAR_ALL = 'wel/log-events/CLEAR_ALL';
 
 const moduleNameCache = {};
 const namespaceColorCache = {};
@@ -91,6 +92,18 @@ export default function reducer(state = initState, action = {}) {
                     && item.level === 'W').length;
                 break;
             }
+            case CLEAR_ALL: {
+                draft.items = [];
+                draft.errors = 0;
+                draft.warnings = 0;
+                draft.moduleNames = ['-- ALL --'];
+                draft.filters = {
+                    module: '-- ALL --',
+                    errorsOnly: false,
+                    warningsOnly: false
+                };
+                break;
+            }
             case FILTER_BY_ERRORS: {
                 draft.filters.errorsOnly = !draft.filters.errorsOnly;
                 break;
@@ -117,4 +130,8 @@ export function fitlerByWarnings() {
 
 export function selectModule(moduleName) {
     return { type: SELECT_MODULE, payload: moduleName};
+}
+
+export function clearAll() {
+    return { type: CLEAR_ALL };
 }
