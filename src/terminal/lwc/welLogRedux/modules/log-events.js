@@ -1,3 +1,4 @@
+import getUser from '@salesforce/apex/WELLogController.getUser';
 import produce from '../lib/immer';
 import { selectColor } from '../lib/colors';
 
@@ -7,19 +8,26 @@ const FILTER_BY_WARNINGS = 'wel/log-events/FILTER_BY_WARNINGS';
 const SELECT_MODULE = 'wel/log-events/SELECT_MODULE';
 const SELECT_USER = 'wel/log-events/SELECT_USER';
 const CLEAR_ALL = 'wel/log-events/CLEAR_ALL';
+const UPDATE_USER_OPTIONS = 'wel/log-events/UPDATE_USER_OPTIONS';
+const UPDATE_MODULE_OPTIONS = 'wel/log-events/UPDATE_MODULE_OPTIONS';
 
-const moduleNameCache = {};
+const userCache = {};
+const moduleCache = {};
 const namespaceColorCache = {};
 
+const __ANY_USER__ = '-- Any User --';
+const __ANY_MODULE__ = '-- Any Module --';
+const initUserOptions = [{ value: __ANY_USER__, text: __ANY_USER__ }];
+const initModuleOptions = [{ value: __ANY_MODULE__, text: __ANY_MODULE__ }];
 const initState = {
     items: [],
     errors: 0,
     warnings: 0,
-    userIds: ['-- Any User --'],
-    modules: ['-- Any Module --'],
+    userOptions: initUserOptions,
+    moduleOptions: initModuleOptions,
     filters: {
-        userId: '-- Any User --',
-        module: '-- Any Module --',
+        userId: __ANY_USER__,
+        module: __ANY_MODULE__,
         errorsOnly: false,
         warningsOnly: false
     }
@@ -29,56 +37,12 @@ export default function reducer(state = initState, action = {}) {
     return produce(state, draft => {
         switch (action.type) {
             case RECIEVE_LOGS: {
-                const {
-                    LVL__c,
-                    TST__c,
-                    NSP__c,
-                    MSG__c,
-                    TRC__c,
-                    CreatedById
-                } = action.payload.data.payload;
-                let eventLog = {
-                    level: LVL__c,
-                    timestamp: TST__c,
-                    namespace: NSP__c,
-                    message: MSG__c,
-                    trace: TRC__c,
-                    createdById: CreatedById,
-                    replayId: action.payload.data.event.replayId,
-                };
-
-                let moduleName = moduleNameCache[eventLog.namespace];
-                if (!moduleName && eventLog.namespace) {
-                    let index = eventLog.namespace.indexOf(':');
-                    if (index === -1) {
-                        moduleName = eventLog.namespace;
-                        moduleNameCache[eventLog.namespace] = eventLog.namespace;
-                    } else {
-                        moduleName = eventLog.namespace.substring(0, index);
-                        moduleNameCache[eventLog.namespace] = moduleName;
-                    }
-                    if (!draft.modules.includes(moduleName)) {
-                        draft.modules.push(moduleName);
-                    }
-                }
-                eventLog.module = moduleName;
-
-                let namespaceColor = namespaceColorCache[eventLog.namespace];
-                if (!namespaceColor && eventLog.namespace) {
-                    namespaceColor = selectColor(eventLog.namespace);
-                    namespaceColorCache[eventLog.namespace] = namespaceColor;
-                }
-                eventLog.namespaceColor = namespaceColor;
-
+                let eventLog = action.payload;
                 draft.items.push(eventLog);
 
-                if (!draft.userIds.includes(eventLog.createdById)) {
-                    draft.userIds.push(eventLog.createdById);
-                }
-
-                if ((draft.filters.module === '-- Any Module --'
+                if ((draft.filters.module === __ANY_MODULE__
                     || draft.filters.module === eventLog.module)
-                    && (draft.filters.userId === '-- Any User --'
+                    && (draft.filters.userId === __ANY_USER__
                     || draft.filters.userId === eventLog.createdById)) {
                     if (eventLog.level === 'E') {
                         draft.errors++;
@@ -94,12 +58,12 @@ export default function reducer(state = initState, action = {}) {
                 draft.filters.module = moduleName;
 
                 draft.errors = draft.items.filter(item =>
-                    (moduleName === '-- Any Module --' || moduleName === item.module)
-                    && (userId === '-- Any User --' || userId === item.createdById)
+                    (moduleName === __ANY_MODULE__ || moduleName === item.module)
+                    && (userId === __ANY_USER__ || userId === item.createdById)
                     && item.level === 'E').length;
                 draft.warnings = draft.items.filter(item =>
-                    (moduleName === '-- Any Module --' || moduleName === item.module)
-                    && (userId === '-- Any User --' || userId === item.createdById)
+                    (moduleName === __ANY_MODULE__ || moduleName === item.module)
+                    && (userId === __ANY_USER__ || userId === item.createdById)
                     && item.level === 'W').length;
                 break;
             }
@@ -109,12 +73,12 @@ export default function reducer(state = initState, action = {}) {
                 draft.filters.userId = userId;
 
                 draft.errors = draft.items.filter(item =>
-                    (moduleName === '-- Any Module --' || moduleName === item.module)
-                    && (userId === '-- Any User --' || userId === item.createdById)
+                    (moduleName === __ANY_MODULE__ || moduleName === item.module)
+                    && (userId === __ANY_USER__ || userId === item.createdById)
                     && item.level === 'E').length;
                 draft.warnings = draft.items.filter(item =>
-                    (moduleName === '-- Any Module --' || moduleName === item.module)
-                    && (userId === '-- Any User --' || userId === item.createdById)
+                    (moduleName === __ANY_MODULE__ || moduleName === item.module)
+                    && (userId === __ANY_USER__ || userId === item.createdById)
                     && item.level === 'W').length;
                 break;
             }
@@ -122,14 +86,16 @@ export default function reducer(state = initState, action = {}) {
                 draft.items = [];
                 draft.errors = 0;
                 draft.warnings = 0;
-                draft.userIds = ['-- Any User --'];
-                draft.modules = ['-- Any Module --'];
+                draft.userOptions = initUserOptions;
+                draft.moduleOptions = initModuleOptions;
                 draft.filters = {
-                    userId: '-- Any User --',
-                    module: '-- Any Module --',
+                    userId: __ANY_USER__,
+                    module: __ANY_MODULE__,
                     errorsOnly: false,
                     warningsOnly: false
                 };
+                moduleCache.length = 0;
+                namespaceColorCache.length = 0;
                 break;
             }
             case FILTER_BY_ERRORS: {
@@ -140,12 +106,83 @@ export default function reducer(state = initState, action = {}) {
                 draft.filters.warningsOnly = !draft.filters.warningsOnly;
                 break;
             }
+            case UPDATE_USER_OPTIONS: {
+                let { id, name } = action.payload;
+                if (!draft.userOptions.find(option => option.value === id)) {
+                    draft.userOptions.push({value: id, text: name});
+                }
+                break;
+            }
+            case UPDATE_MODULE_OPTIONS: {
+                let moduleName = action.payload;
+                if (!draft.moduleOptions.find(option => option.value === moduleName)) {
+                    draft.moduleOptions.push({ value: moduleName, text: moduleName });
+                }
+                break;
+            }
         }
     })
 }
 
 export function recieveLogEvent(logEvent) {
-    return { type: RECIEVE_LOGS, payload: logEvent };
+    return (dispatch) => {
+        const {
+            LVL__c: level,
+            TST__c: timestamp,
+            NSP__c: namespace,
+            MSG__c: message,
+            TRC__c: trace,
+            CreatedById: createdById
+        } = logEvent.data.payload;
+
+        let item = {
+            level,
+            timestamp,
+            namespace,
+            message,
+            trace,
+            createdById,
+            replayId: logEvent.data.event.replayId,
+        };
+
+        let namespaceColor = namespaceColorCache[namespace];
+        if (!namespaceColor && namespace) {
+            namespaceColor = selectColor(namespace);
+            namespaceColorCache[namespace] = namespaceColor;
+        }
+        item.namespaceColor = namespaceColor;
+
+        let moduleName = moduleCache[namespace];
+        if (!moduleName && namespace) {
+            let index = namespace.indexOf(':');
+            if (index === -1) {
+                moduleName = namespace;
+                moduleCache[namespace] = namespace;
+            } else {
+                moduleName = namespace.substring(0, index);
+                moduleCache[namespace] = moduleName;
+            }
+            if (moduleCache)
+            dispatch({ type: UPDATE_MODULE_OPTIONS, payload: moduleName });
+        }
+        item.module = moduleName;
+        dispatch({ type: RECIEVE_LOGS, payload: item });
+
+        if (!userCache[createdById]) {
+            userCache[createdById] = createdById;
+            getUser({ userId: createdById })
+                .then(result => {
+                    let user = {
+                        id: result.Id,
+                        name: result.Name,
+                    };
+                    userCache[createdById] = user;
+                    dispatch({ type: UPDATE_USER_OPTIONS, payload: user });
+                })
+                .catch(error => {
+                });
+        }
+    };
 }
 
 export function fitlerByErrors() {
@@ -153,15 +190,15 @@ export function fitlerByErrors() {
 }
 
 export function fitlerByWarnings() {
-    return { type: FILTER_BY_WARNINGS};
+    return { type: FILTER_BY_WARNINGS };
 }
 
 export function selectModule(moduleName) {
-    return { type: SELECT_MODULE, payload: moduleName};
+    return { type: SELECT_MODULE, payload: moduleName };
 }
 
 export function selectUser(userId) {
-    return { type: SELECT_USER, payload: userId};
+    return { type: SELECT_USER, payload: userId };
 }
 
 export function clearAll() {

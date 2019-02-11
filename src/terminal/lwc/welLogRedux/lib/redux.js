@@ -624,43 +624,32 @@ function compose() {
 
 function applyMiddleware() {
     for (var _len = arguments.length, middlewares = new Array(_len), _key = 0; _key < _len; _key++) {
-    middlewares[_key] = arguments[_key];
+        middlewares[_key] = arguments[_key];
     }
 
     return function (createStore) {
-    return function () {
-        var store = createStore.apply(void 0, arguments);
+        return function () {
+            var store = createStore.apply(void 0, arguments);
 
-        var _dispatch = function dispatch() {
-        throw new Error("Dispatching while constructing your middleware is not allowed. " + "Other middleware would not be applied to this dispatch.");
+            var _dispatch = function dispatch() {
+            throw new Error("Dispatching while constructing your middleware is not allowed. " + "Other middleware would not be applied to this dispatch.");
+            };
+
+            var middlewareAPI = {
+            getState: store.getState,
+            dispatch: function dispatch() {
+                return _dispatch.apply(void 0, arguments);
+            }
+            };
+            var chain = middlewares.map(function (middleware) {
+                return middleware(middlewareAPI);
+            });
+            _dispatch = compose.apply(void 0, chain)(store.dispatch);
+            return _objectSpread({}, store, {
+                dispatch: _dispatch
+            });
         };
-
-        var middlewareAPI = {
-        getState: store.getState,
-        dispatch: function dispatch() {
-            return _dispatch.apply(void 0, arguments);
-        }
-        };
-        var chain = middlewares.map(function (middleware) {
-        return middleware(middlewareAPI);
-        });
-        _dispatch = compose.apply(void 0, chain)(store.dispatch);
-        return _objectSpread({}, store, {
-        dispatch: _dispatch
-        });
     };
-    };
-}
-
-/*
-    * This is a dummy function to check if the function name has been altered by minification.
-    * If the function has been minified and NODE_ENV !== 'production', warn the user.
-    */
-
-function isCrushed() {}
-
-if (typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') {
-    warning('You are currently using minified code outside of NODE_ENV === "production". ' + 'This means that you are running a slower development build of Redux. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or setting mode to production in webpack (https://webpack.js.org/concepts/mode/) ' + 'to ensure you have the correct code for your production build.');
 }
 
 export {

@@ -1,7 +1,7 @@
 <template>
     <select onchange={change}>
         <template for:each={options}  for:item="option">
-            <option key={option} value={option}>{option}</option>
+            <option key={option.value} value={option.value}>{option.text}</option>
         </template>
     </select>
 </template>

@@ -14,8 +14,8 @@ export default class WelLogEventView extends LightningElement {
     @track isScrollLocked = false;
     @track showOutput = true;
     @track showChart = false;
-    @track modules;
-    @track userIds;
+    @track moduleOptions;
+    @track userOptions;
     @track filterErrorsOnly;
     @track filterWarningsOnly;
     @track warnings;
@@ -79,13 +79,13 @@ export default class WelLogEventView extends LightningElement {
     connectedCallback() {
         this.unsubscribe = store.subscribe(() => {
             let { logEvents } = store.getState();
-            let { warnings, errors, filters, modules, userIds } = logEvents;
+            let { warnings, errors, filters, moduleOptions, userOptions } = logEvents;
             this.warnings = warnings;
             this.errors = errors;
             this.filterErrorsOnly = filters.errorsOnly;
             this.filterWarningsOnly = filters.warningsOnly;
-            this.modules = modules;
-            this.userIds = userIds;
+            this.moduleOptions = moduleOptions;
+            this.userOptions = userOptions;
         });
     }
 
