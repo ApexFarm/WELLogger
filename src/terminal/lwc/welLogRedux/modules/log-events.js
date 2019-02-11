@@ -11,8 +11,8 @@ const CLEAR_ALL = 'wel/log-events/CLEAR_ALL';
 const UPDATE_USER_OPTIONS = 'wel/log-events/UPDATE_USER_OPTIONS';
 const UPDATE_MODULE_OPTIONS = 'wel/log-events/UPDATE_MODULE_OPTIONS';
 
-const userCache = {};
-const moduleCache = {};
+let userCache = {};
+let moduleCache = {};
 const namespaceColorCache = {};
 
 const __ANY_USER__ = '-- Any User --';
@@ -94,8 +94,8 @@ export default function reducer(state = initState, action = {}) {
                     errorsOnly: false,
                     warningsOnly: false
                 };
-                moduleCache.length = 0;
-                namespaceColorCache.length = 0;
+                moduleCache = {};
+                userCache = {};
                 break;
             }
             case FILTER_BY_ERRORS: {
