@@ -1,0 +1,11 @@
+c-wel-log-header {
+    height: 32px;
+}
+
+c-wel-log-event-list {
+    height: calc(100% - 54px);
+}
+
+c-wel-log-footer {
+    height: 22px;
+}

@@ -15,7 +15,7 @@ In addition, it also has the following features:
 2. Categorize logs by namespaces to provide richer context, i.e. `module_name:feature_name:modifier`.
 3. Control logging levels for *database*, *platform event*, and *system debug* outputs via namespaces.
 
-Below is a platform event output terminal, which is a lightening web component (LWC) in its maximized state. `[sample:controller]` is the namespace of the log.
+Below is a platform event output terminal, which is a lightening web component (LWC) in its maximized state. `[sample:controller]` is a namespace.
 
 <img width="680" src="doc/console.png" alt="console.png"/>
 
@@ -28,21 +28,25 @@ Before doing any installation, please pay attention to the following two directo
 
 #### 1. Ant Migration Tool
 
-This is the most common way if you are not familiar with `sfdx-cli`. Upload all source codes under directory `dist` by any tool/IDE supporting the file structure understandable by [Ant Migration Tool](https://developer.salesforce.com/docs/atlas.en-us.daas.meta/daas/meta_development.htm). Here are steps for how to upload them via workbench:
+This is the most common way if you are not familiar with `sfdx-cli`. Upload all source codes under directory `dist\logger` or `dist\terminal` by any tool/IDE supporting the file structure understandable by [Ant Migration Tool](https://developer.salesforce.com/docs/atlas.en-us.daas.meta/daas/meta_development.htm). Here are steps for how to upload them via workbench:
 
 1. Download the source code
-2. Zip the `dist` folder
+2. Zip the `dist\logger` or `dist\terminal` folder
 3. Login into [workbench](https://workbench.developerforce.com)
 4. Choose `migration -> Deploy` to upload the zip file
 
 #### 2. SFDX-CLI or VS Code
 
-If you are familiar with `sfdx-cli`, you can upload all source codes under directory `src` to your organization via sfdx-cli or VS Code. The library is developed under VS Code [Salesforce Extension Pack](https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode) extension.
+If you are familiar with `sfdx-cli`, you can upload all source codes under directory `src\logger` or `src\terminal` to your organization via sfdx-cli or VS Code. The library is developed under VS Code [Salesforce Extension Pack](https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode) extension.
 
 1. Download the source code
 2. Open VS Code with sfdx-cli right configured
 3. Issue command `SFDX: Authorize an Org` for your organization
-4. Right click the directory `src` and issue command `SFDX: Deploy Source to Org`
+4. Right click the directory `src\logger` or `src\terminal` and issue command `SFDX: Deploy Source to Org`
+
+#### 3. LWC Terminal
+
+Ideally in App Builder create a single colum layout. Embed the WELLogViewer component and choose a height, you will be good to go.
 
 ## Usage
 
@@ -70,7 +74,7 @@ logger.debug(LoggingLevel.ERROR, ex);
 logger.debug(LoggingLevel.Error, 'error description', ex);
 ```
 
-Logger namespace can be chained to create new loggers in new namespaces.
+Namespaces can be chained to create loggers in new namespaces.
 
 ```java
 WELLogger.ILogger logger = WELLogger.get('module_name'); // namespace = 'module_name'
