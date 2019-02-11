@@ -17,7 +17,7 @@ In addition, it also has the following features:
 
 Below is a platform event output terminal built with lightening web component (LWC) in its maximized state. It can display logs generated on the fly via streaming API. `[sample:controller]` is a namespace.
 
-<img width="680" src="doc/console.png" alt="console.png"/>
+<img width="680" src="doc/console.png?date=2019-02-11" alt="console.png"/>
 
 ## Installation
 
@@ -99,7 +99,7 @@ However, new good namespace patterns can always be invented to suit your project
 #### Module Logging Levels
 Use  `WELLogSetting__mdt` custom metadata type to control logging levels for each module. There are two built-in modules `main` and `default`. Their usage has been explained in the above section.
 
-![settings.png](doc/settings.png)
+![settings.png](doc/settings.png?date=2019-02-11)
 
 | Field Name        | Description                                                  |
 | ----------------- | ------------------------------------------------------------ |
