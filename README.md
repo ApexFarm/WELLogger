@@ -15,7 +15,7 @@ In addition, it also has the following features:
 2. Categorize logs by namespaces to provide richer context, i.e. `module_name:feature_name:modifier`.
 3. Control logging levels for *database*, *platform event*, and *system debug* outputs via namespaces.
 
-Below is a platform event output terminal, which is a lightening web component (LWC) in its maximized state. `[sample:controller]` is a namespace.
+Below is a platform event output terminal built with lightening web component (LWC) in its maximized state. It can display logs generated on the fly via streaming API. `[sample:controller]` is a namespace.
 
 <img width="680" src="doc/console.png" alt="console.png"/>
 
