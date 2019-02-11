@@ -1,0 +1,15 @@
+:host {
+    display: block;
+    padding-right: 15px;
+    background-color: #007ACC;
+}
+
+.right {
+    display: block;
+    float: right;
+}
+
+.left {
+    display: block;
+    float: left;
+}

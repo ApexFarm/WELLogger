@@ -1,0 +1,33 @@
+:host {
+    display: block;
+    background-color: #1E1E1E;
+    color: #D4D4D4;
+
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+    ul {
+        margin: 0 15px 0 0;
+        border-right: 1px solid #333333;
+        min-height: 100%;
+
+        list-style: none;
+        line-height: 20px;
+    }
+
+        :host c-wel-log-event-list-item {
+            display: none;
+        }
+
+        :host(.ALL) c-wel-log-event-list-item {
+            display: list-item;
+        }
+
+        :host(.ERROR) c-wel-log-event-list-item.E {
+            display: list-item;
+        }
+
+        :host(.WARN) c-wel-log-event-list-item.W {
+            display: list-item;
+        }

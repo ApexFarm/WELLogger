@@ -1,47 +1,56 @@
 # Well Logger
 
-*NOTE*: WELLogger 2.0 is comming soon. It is based on the platform event, and Lightning Web Component (LWC). API output type will be removed and replaced by the Event output. A nice backend terminal is developed with LWC for you to view logs in live. Database output will be renamed to Object vs Event. Checkout it out in develop branch.
+![](https://img.shields.io/badge/version-2.0.0--alpha.1-orange.svg)
 
 WELLogger is a thin wrapper around Salesforce Apex `System.debug`. It aims to pretty format objects for classes such as Exception, and HttpResponse etc automatically.
+
 ```java
 System.debug(ex.getMessage() + ': ' + ex.getStackTrackMessage()); // no more this
 WELLogger.debug(ex); // just do this
 ```
 In addition, it also has the following features:
-1. Output logs to database sObject `WELLog__c`.
-2. Output logs to `WELLogger.logs` array, which can be further exposed to external APIs.
-3. Categorize logs by namespaces, i.e. `module_name:feature_name:modifier`.
-4. Control logging levels for database, debug log, and web outputs by namespaces.
+1. Add two new log outputs:
+   - Output as database sObject `WELLog__c` for long time persistence of crucial logs.
+   - Output as platform event `WELLogEvent__e` for live debugging.
+2. Categorize logs by namespaces to provide richer context, i.e. `module_name:feature_name:modifier`.
+3. Control logging levels for *database*, *platform event*, and *system debug* outputs via namespaces.
 
-Below is a web browser output example. `[sample:controller]` is the namespace of the log. It is used to provide richer context of the log message.
+Below is a platform event output terminal built with lightening web component (LWC) in its maximized state. It can display logs generated on the fly via streaming API. `[sample:controller]` is a namespace.
 
 <img width="680" src="doc/console.png" alt="console.png"/>
 
 ## Installation
 
-There are two ways to deploy them into your organization:
+Before doing any installation, please pay attention to the following two directories:
+
+1. `src\logger` - **Required***, this is the core library. It can be deployed standalone if you don't want to output logs as platform events, or your org doesn't support it.
+2. `src\terminal` - **Optional***, deploy this together with the `src\logger` if you also want to get some benefits from the platform event output terminal.
 
 #### 1. Ant Migration Tool
 
-This is the most common way if you are not familiar with `sfdx-cli`. Upload all source codes under directory `dist` by any tool/IDE supporting the file structure understandable by [Ant Migration Tool](https://developer.salesforce.com/docs/atlas.en-us.daas.meta/daas/meta_development.htm). Here are steps for how to upload them via workbench:
+This is the most common way if you are not familiar with `sfdx-cli`. Upload all source codes under directory `dist\logger` or `dist\terminal` by any tool/IDE supporting the file structure understandable by [Ant Migration Tool](https://developer.salesforce.com/docs/atlas.en-us.daas.meta/daas/meta_development.htm). Here are steps for how to upload them via workbench:
 
 1. Download the source code
-2. Zip the `dist` folder
+2. Zip the `dist\logger` or `dist\terminal` folder
 3. Login into [workbench](https://workbench.developerforce.com)
 4. Choose `migration -> Deploy` to upload the zip file
 
 #### 2. SFDX-CLI or VS Code
 
-If you are familiar with `sfdx-cli`, you can upload all source codes under directory `src-force/logger` to your organization via sfdx-cli or VS Code. Because the library is developed with VS Code [Salesforce CLI Integration](https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode-core) extension.
+If you are familiar with `sfdx-cli`, you can upload all source codes under directory `src\logger` or `src\terminal` to your organization via sfdx-cli or VS Code. The library is developed under VS Code [Salesforce Extension Pack](https://marketplace.visualstudio.com/items?itemName=salesforce.salesforcedx-vscode) extension.
 
 1. Download the source code
 2. Open VS Code with sfdx-cli right configured
 3. Issue command `SFDX: Authorize an Org` for your organization
-4. Right click the directory `src-force/logger` and issue command `SFDX: Deploy Source to Org`
+4. Right click the directory `src\logger` or `src\terminal` and issue command `SFDX: Deploy Source to Org`
+
+#### 3. LWC Terminal
+
+Ideally in App Builder create a single colum layout. Embed the WELLogViewer component and choose a height, you will be good to go.
 
 ## Usage
 
-Its usage is as simple as `System.debug`.
+Its usage is as simple as `System.debug` with same APIs.
 
 ```java
 WELLogger.debug('doing some work');
@@ -55,7 +64,7 @@ WELLogger.debug('error description', ex);
 WELLogger.debug(LoggingLevel.Error, 'error description', ex);
 ```
 
-When used in above way, all logs will be default to the `main` namespace implicitly. To define loggers with custom namespaces i.e. `module_name:feature_name:modifier`, please use the `WELLogger.get()` API as below. If a custom module doesn't have a WELLog Setting, the `default` setting will be applied. We will talk more about namespaces and settings in the next section.
+When `debug` is called as a static method, all logs will be default to a `main` namespace implicitly. To define loggers with custom namespaces i.e. `module_name:feature_name:modifier`, please use the `WELLogger.get()` API as below.
 
 ```java
 // WELLogger.ILogger and WELLogger.LoggerInterface can be used interchangeably
@@ -65,13 +74,15 @@ logger.debug(LoggingLevel.ERROR, ex);
 logger.debug(LoggingLevel.Error, 'error description', ex);
 ```
 
-Logger namespace can be chained to create new loggers in another namespace.
+Namespaces can be chained to create loggers in new namespaces.
 
 ```java
 WELLogger.ILogger logger = WELLogger.get('module_name'); // namespace = 'module_name'
 logger = logger.get('feature_name'); // namespace = 'module_name:feature_name'
 logger = logger.get('modifier'); // namespace = 'module_name:feature_name:modifier'
 ```
+
+All log outputs are controlled by the WELLog Setting of each module. If the module of a custom namespace doesn't have a corresponding WELLog Setting, the `default` WELLog Setting will be applied. We will talk more about namespaces and settings in the next section.
 
 ### Namespaces
 
@@ -81,9 +92,9 @@ Each log must have a namespace. A namespace should generally follow a pattern li
 | -------------- | ------------------------------------------------------------ |
 | Module Name    | **Required**. Module name should be short and descriptive words. |
 | Feature Name   | **Optional**. Feature name could be a short functional description, a class name, or the artchitecture layer etc. |
-| Modifier       | **Optional**. Supplement to the feature name to further classify the log contexts. Is it an exception? How severe is it? |
+| Modifier       | **Optional**. Supplement to the feature name to further classify the log contexts. For example, it can be used to identify an exception or the log severity etc. |
 
-However, new good namespace pattern can always be invented to suit your project needs. `module_name:class_name` might not be a good alternative, but it is useful and straightforward in some circumstances. Once formula fields created to parse the namespace context out, we can use them to generate much meaningful reports. 
+However, new good namespace patterns can always be invented to suit your project needs. Some may not be good alternatives, but they could be useful and straightforward in some circumstances. With the help of formula fields to parse the namespaces, we can generate much meaningful reports.
 
 #### Module Logging Levels
 Use  `WELLogSetting__mdt` custom metadata type to control logging levels for each module. There are two built-in modules `main` and `default`. Their usage has been explained in the above section.
@@ -100,26 +111,25 @@ Use  `WELLogSetting__mdt` custom metadata type to control logging levels for eac
 
 The library supports three output types:
 
-| Output   | Description                                                  | Best Practice                                                |
-| -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Database | Persist logs into sObject `WELLog__c`, after calling `WELLogger.save()` method. | Only enable this output for critical issues and exceptions.  |
-| Debug    | Persist logs into the standard system debug logs.            | Main debug methodology, use this for daily development debugging activities as well as production debug, and performance tuning etc. |
-| API      | Logs will not be persisted. Pull logs when needed from `WELLogger.logs`. | It is useful when logs can be viewed externally. It won't impact the 250MB debug log size limit, if APIs are called frequently and a lot of data/messages are carried with logs. **Note**: This should be turned off on production, unless another level of security is built on top of this library. |
+| Output     | Description                                        | Best Practice                                                |
+| ---------- | -------------------------------------------------- | ------------------------------------------------------------ |
+| **Object** | Persist logs into sObject `WELLog__c`.             | Only enable this output for critical issues and exceptions.  |
+| **Event**  | Persist logs into platform event `WELLogEvent__e`. | Use this for Apex level debugging activities during developement phase. It won't impact the 250MB debug log size limit. Since platform event has a daily limit, to avoid generate too much on production, please set it to a strict logging level, or temporarily raise the level in a specific time window. |
+| **Debug**  | Persist logs into the standard system debug.       | Use this for more advanced debugging activities especially to view logs not controlled by Apex `System.debug`. Such as SOQL statement and performance tuning etc. |
 
-#### Database Output
+#### Logging Paradigm
 
-Here is the best approach for how to use `WELLogger.save()` to save logs into the database. Please limit this `try catch finally` pattern only to the entrance method of the current excecution context, i.e. `execute()` method for batch classes.
+Here is the best approach for how to use `WELLogger.save()` to save logs as sObjects and publish as platform events. Please limit this `try catch finally` pattern only to the entrance method of the current excecution context, i.e. `execute()` method for batch classes.
 
 ```java
 public class WELSampleController {
     // WELLogger.ILogger and WELLogger.LoggerInterface can be used interchangeably
     static WELLogger.ILogger logger = WELLogger.get('sample:controller');
-    
+
     class Response {
         Object data { get; set; }
-        Object logs { get; set; }
     }
-    
+
     @RemoteAction
     public static Response doSomeWork(String param1, Decimal param2) {
         logger.debug('[M:E] doSomeWork()'); // log for method enter
@@ -129,67 +139,20 @@ public class WELSampleController {
         Response res = new Response();
         try {
             logger.debug(LoggingLevel.INFO, 'doing lots of uninteresting work');
-            logger.debug(LoggingLevel.WARN, 'doing some work');
-            logger.debug(LoggingLevel.INFO, 'doing lots of uninteresting work');
-            logger.debug(LoggingLevel.WARN, 'doing some work');
             logger.debug('a list of objects', new List<Object>());
-        } catch (DmlException ex) {
-            logger.get('ex').debug(LoggingLevel.ERROR, ex); // use ex as modifier
         } catch(Exception ex) {
             logger.get('ex').debug(LoggingLevel.ERROR, ex); // use ex as modifier
         } finally {
-            WELLogger.save();          // output to database
-            res.logs = WELLogger.logs; // output to browser
+            WELLogger.save(); // output to database
         }
 
         logger.debug('[M:X] doSomeWork()'); // log for method exit
+        logger.debug('[R:res]', res);       // log for return value
         return res;
     }
 }
 ```
 
-#### Browser Output 
-
-In the above example we can also see a log output to the remote action response. We can print these logs in the developer console with wellogger.js helper. To view the logs in Chrome developer console, select `Verbose` as the logging level. Source codes for both remote action and lightning component are under the directory `src-force/sample`.
-
-```html
-<apex:page name="WELSample" controller="WELSampleController">
-  <apex:includeScript value="{!URLFOR($Resource.WELLogger, 'wellogger.js')}"/>
-  <script>
-    Visualforce.remoting.Manager.invokeAction(
-      '{!$RemoteAction.WELSampleController.doSomeWork}', 'value 1', 'value 2',
-      function(result, event){
-        if (event.status) {
-          wellogger(result.logs);
-        }
-      },
-      {escape: true}
-    );
-  </script>
-</apex:page>
-```
-
 ## License
-MIT License
-
-Copyright (c) 2019 Jianfeng Jin
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
+MIT
 

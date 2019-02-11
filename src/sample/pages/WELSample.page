@@ -1,0 +1,13 @@
+<apex:page name="WELSample" controller="WELSampleController">
+  <h1>Congratulations</h1>
+  <script>
+    Visualforce.remoting.Manager.invokeAction(
+      '{!$RemoteAction.WELSampleController.doSomeWork}',
+      'value 1',
+      123.45,
+      function(result, event){
+      },
+      {escape: true}
+    );
+  </script>
+</apex:page>

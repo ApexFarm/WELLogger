@@ -1,0 +1,10 @@
+<template>
+    <span class={className} title={title}>
+        <template if:true={hasIcon}>
+            <i class={icon}></i>
+        </template>
+        <template if:true={labelString}>
+            <span class="label"> {labelString}</span>
+        </template>
+    </span>
+</template>

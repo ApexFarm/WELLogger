@@ -1,0 +1,90 @@
+<template>
+    <c-wel-log-header>
+        <span slot="left">
+            <c-wel-log-button
+                is-active={showOutput}
+                class="wel-in-header menu"
+                icon="fas fa-list"
+                label="OUTPUT"
+                onclick={toggleMenu}>
+            </c-wel-log-button>
+            <!-- <c-wel-log-button
+                is-active={showChart}
+                class="wel-in-header menu"
+                icon="fas fa-chart-bar"
+                label="CHART"
+                onclick={toggleMenu}>
+            </c-wel-log-button> -->
+        </span>
+        <span slot="right">
+            <c-wel-log-select
+                options={userOptions}
+                onchange={selectUser}>
+            </c-wel-log-select>
+            <c-wel-log-select
+                options={moduleOptions}
+                onchange={selectModule}>
+            </c-wel-log-select>
+            <c-wel-log-button
+                class="wel-in-header"
+                icon="fas fa-trash-alt"
+                title="Clear Output"
+                onclick={handleClearOutput}>
+            </c-wel-log-button>
+            <c-wel-log-button
+                class="wel-in-header"
+                is-active={isScrollLocked}
+                true-icon="fas fa-lock"
+                true-title="Toggle Scroll Lock"
+                false-icon="fas fa-lock-open"
+                false-title="Toggle Scroll Lock"
+                onclick={toggleScrollLock}>
+            </c-wel-log-button>
+            <c-wel-log-button
+                class="wel-in-header"
+                is-active={isFullscreen}
+                true-icon="fas fa-window-minimize"
+                true-title="Restore Window Size"
+                false-icon="fas fa-window-maximize"
+                false-title="Maximize Window Size"
+                onclick={toggleFullscreen}>
+            </c-wel-log-button>
+        </span>
+    </c-wel-log-header>
+    <c-wel-log-event-list
+        class={levelFilterClass}
+        is-scroll-locked={isScrollLocked}>
+    </c-wel-log-event-list>
+    <c-wel-log-footer>
+        <span slot="left">
+        </span>
+        <span slot="right">
+            <c-wel-log-button
+                class="wel-in-footer"
+                is-active={filterErrorsOnly}
+                false-icon="fas fa-times-circle"
+                true-icon="fas fa-times-circle red"
+                title="Errors"
+                label={errors}
+                onclick={toggleErrors}>
+            </c-wel-log-button>
+            <c-wel-log-button
+                class="wel-in-footer"
+                is-active={filterWarningsOnly}
+                false-icon="fas fa-exclamation-triangle"
+                true-icon="fas fa-exclamation-triangle yellow"
+                title="Warnings"
+                label={warnings}
+                onclick={toggleWarnings}>
+            </c-wel-log-button>
+            <c-wel-log-button
+                class="wel-in-footer"
+                is-active={isSubscribing}
+                true-icon="fas fa-pause-circle"
+                false-icon="fas fa-play-circle"
+                title="Toggle Subscription"
+                onclick={toggleSubscribe}>
+            </c-wel-log-button>
+        </span>
+    </c-wel-log-footer>
+</template>

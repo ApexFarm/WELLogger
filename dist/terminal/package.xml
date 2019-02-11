@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>WELLogController</members>
+        <members>WELLogControllerTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>WELLogViewer</members>
+        <name>AuraDefinitionBundle</name>
+    </types>
+    <types>
+        <members>WELLogEvent__e</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>welLogApp</members>
+        <members>welLogButton</members>
+        <members>welLogEventList</members>
+        <members>welLogEventListItem</members>
+        <members>welLogEventView</members>
+        <members>welLogFooter</members>
+        <members>welLogHeader</members>
+        <members>welLogRedux</members>
+        <members>welLogSelect</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>WELLogViewer</members>
+        <name>StaticResource</name>
+    </types>
+    <version>45.0</version>
+</Package>

@@ -1,0 +1,6 @@
+{
+    "extends": "@salesforce/eslint-config-lwc/recommended",
+    "rules": {
+        "default-case": "off"
+    }
+}

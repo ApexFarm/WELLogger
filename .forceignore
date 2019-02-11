@@ -2,4 +2,14 @@
 # More information: https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_exclude_source.htm
 #
 
-package.xml
+**/package.xml
+
+# JS Bundle
+**/jsconfig.json
+**/.eslintrc.json
+**/node_modules
+**/package.json
+**/package-lock.json
+**/webpack.config.js
+**/rollup.config.js
+

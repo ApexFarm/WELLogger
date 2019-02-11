@@ -1,0 +1,49 @@
+:host {
+    font-size: 12px;
+}
+
+.replayid {
+    color: #707070;
+}
+
+.tst {
+    color: #d7ba7d;
+}
+
+.nsp {
+    color: #4EC9B0;
+}
+
+.line {
+    padding: 0 5px 0 20px;
+    border-left-width: 3px;
+    border-left-style: solid;
+    text-indent: -15px;
+    overflow-wrap: break-word;
+}
+
+    .line:focus {
+        background-color: rgba(102, 102, 102, 0.3);
+        outline-width: 0;
+    }
+
+    .line.ERROR:focus {
+        background-color: rgba(244, 71, 71, 0.3);
+        outline-width: 0;
+    }
+
+    .NONE, .FINE, .DEBUG {
+        border-left-color:  #333333;
+    }
+
+    .INFO {
+        border-left-color: #457c9c;
+    }
+
+    .WARN {
+        border-left-color: #d7ba7d;
+    }
+
+    .ERROR {
+        border-left-color: #f44747;
+    }
