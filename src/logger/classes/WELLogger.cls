@@ -133,7 +133,7 @@ public with sharing class WELLogger {
         saveLogs(LOG_QUEUE_OBJECT, LOG_TYPE_OBJECT, false);
     }
 
-    private static void saveLogs(List<Log> logQueue, Type logType, Boolean isEvent) {
+    private static void saveLogs(List<Log> logQueue, Type logType, Boolean asEvent) {
         if (!logQueue.isEmpty()) {
             if (logType != null) {
                 List<sObject> logList = new List<sObject>();
@@ -147,10 +147,10 @@ public with sharing class WELLogger {
                     logObj.put('TRC__c', String.valueOf(log.trc));
                     logList.add(logObj);
                 }
-                if (isEvent) {
+                if (asEvent) {
                     Eventbus.publish(logList);
                 } else {
-                    Database.insert(logList, true);
+                    Database.insert(logList, false);
                 }
                 logQueue.clear();
             }

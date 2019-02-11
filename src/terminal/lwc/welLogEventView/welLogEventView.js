@@ -1,5 +1,12 @@
 import { LightningElement, api, track } from 'lwc';
-import { store, fitlerByErrors, fitlerByWarnings, selectModule, clearAll } from 'c/welLogRedux';
+import {
+    store,
+    fitlerByErrors,
+    fitlerByWarnings,
+    selectModule,
+    selectUser,
+    clearAll
+} from 'c/welLogRedux';
 
 export default class WelLogEventView extends LightningElement {
     @api isSubscribing = false;
@@ -7,7 +14,8 @@ export default class WelLogEventView extends LightningElement {
     @track isScrollLocked = false;
     @track showOutput = true;
     @track showChart = false;
-    @track moduleNames;
+    @track modules;
+    @track userIds;
     @track filterErrorsOnly;
     @track filterWarningsOnly;
     @track warnings;
@@ -64,15 +72,20 @@ export default class WelLogEventView extends LightningElement {
         store.dispatch(selectModule(event.detail));
     }
 
+    selectUser(event) {
+        store.dispatch(selectUser(event.detail));
+    }
+
     connectedCallback() {
         this.unsubscribe = store.subscribe(() => {
             let { logEvents } = store.getState();
-            let { warnings, errors, filters, moduleNames } = logEvents;
+            let { warnings, errors, filters, modules, userIds } = logEvents;
             this.warnings = warnings;
             this.errors = errors;
             this.filterErrorsOnly = filters.errorsOnly;
             this.filterWarningsOnly = filters.warningsOnly;
-            this.moduleNames = moduleNames;
+            this.modules = modules;
+            this.userIds = userIds;
         });
     }
 

@@ -12,6 +12,7 @@ const lvlMap = {
 
 export default class WelLogEventListItem extends LightningElement {
     @api filterModule;
+    @api filtreUserid;
     level;
     time;
     logEvent;
@@ -32,8 +33,10 @@ export default class WelLogEventListItem extends LightningElement {
     }
 
     get displayNone() {
-        if (this.filterModule === '-- ALL --'
-            || this.filterModule === this.logEvent.module) {
+        if ((this.filterModule === '-- Any Module --'
+            || this.filterModule === this.logEvent.module)
+            && (this.filtreUserid === '-- Any User --'
+            || this.filtreUserid === this.logEvent.createdById)) {
             return null;
         }
         return 'display:none;';

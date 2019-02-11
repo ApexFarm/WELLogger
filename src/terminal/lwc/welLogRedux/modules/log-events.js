@@ -5,18 +5,21 @@ const RECIEVE_LOGS = 'wel/log-events/RECIEVE_LOGS';
 const FILTER_BY_ERRORS = 'wel/log-events/FILTER_BY_ERRORS';
 const FILTER_BY_WARNINGS = 'wel/log-events/FILTER_BY_WARNINGS';
 const SELECT_MODULE = 'wel/log-events/SELECT_MODULE';
+const SELECT_USER = 'wel/log-events/SELECT_USER';
 const CLEAR_ALL = 'wel/log-events/CLEAR_ALL';
 
 const moduleNameCache = {};
 const namespaceColorCache = {};
 
 const initState = {
-    items:[],
+    items: [],
     errors: 0,
     warnings: 0,
-    moduleNames: ['-- ALL --'],
+    userIds: ['-- Any User --'],
+    modules: ['-- Any Module --'],
     filters: {
-        module: '-- ALL --',
+        userId: '-- Any User --',
+        module: '-- Any Module --',
         errorsOnly: false,
         warningsOnly: false
     }
@@ -34,7 +37,6 @@ export default function reducer(state = initState, action = {}) {
                     TRC__c,
                     CreatedById
                 } = action.payload.data.payload;
-
                 let eventLog = {
                     level: LVL__c,
                     timestamp: TST__c,
@@ -55,8 +57,8 @@ export default function reducer(state = initState, action = {}) {
                         moduleName = eventLog.namespace.substring(0, index);
                         moduleNameCache[eventLog.namespace] = moduleName;
                     }
-                    if (!draft.moduleNames.includes(moduleName)) {
-                        draft.moduleNames.push(moduleName);
+                    if (!draft.modules.includes(moduleName)) {
+                        draft.modules.push(moduleName);
                     }
                 }
                 eventLog.module = moduleName;
@@ -70,8 +72,14 @@ export default function reducer(state = initState, action = {}) {
 
                 draft.items.push(eventLog);
 
-                if (draft.filters.module === '-- ALL --'
-                    || draft.filters.module === eventLog.module) {
+                if (!draft.userIds.includes(eventLog.createdById)) {
+                    draft.userIds.push(eventLog.createdById);
+                }
+
+                if ((draft.filters.module === '-- Any Module --'
+                    || draft.filters.module === eventLog.module)
+                    && (draft.filters.userId === '-- Any User --'
+                    || draft.filters.userId === eventLog.createdById)) {
                     if (eventLog.level === 'E') {
                         draft.errors++;
                     } else if (eventLog.level === 'W') {
@@ -81,14 +89,32 @@ export default function reducer(state = initState, action = {}) {
                 break;
             }
             case SELECT_MODULE: {
-                draft.filters.module = action.payload;
+                let moduleName = action.payload;
+                let userId = draft.filters.userId;
+                draft.filters.module = moduleName;
+
                 draft.errors = draft.items.filter(item =>
-                    (action.payload === '-- ALL --'
-                    || action.payload === item.module)
+                    (moduleName === '-- Any Module --' || moduleName === item.module)
+                    && (userId === '-- Any User --' || userId === item.createdById)
                     && item.level === 'E').length;
                 draft.warnings = draft.items.filter(item =>
-                    (action.payload === '-- ALL --'
-                    || action.payload === item.module)
+                    (moduleName === '-- Any Module --' || moduleName === item.module)
+                    && (userId === '-- Any User --' || userId === item.createdById)
+                    && item.level === 'W').length;
+                break;
+            }
+            case SELECT_USER: {
+                let moduleName = draft.filters.module;
+                let userId = action.payload;
+                draft.filters.userId = userId;
+
+                draft.errors = draft.items.filter(item =>
+                    (moduleName === '-- Any Module --' || moduleName === item.module)
+                    && (userId === '-- Any User --' || userId === item.createdById)
+                    && item.level === 'E').length;
+                draft.warnings = draft.items.filter(item =>
+                    (moduleName === '-- Any Module --' || moduleName === item.module)
+                    && (userId === '-- Any User --' || userId === item.createdById)
                     && item.level === 'W').length;
                 break;
             }
@@ -96,9 +122,11 @@ export default function reducer(state = initState, action = {}) {
                 draft.items = [];
                 draft.errors = 0;
                 draft.warnings = 0;
-                draft.moduleNames = ['-- ALL --'];
+                draft.userIds = ['-- Any User --'];
+                draft.modules = ['-- Any Module --'];
                 draft.filters = {
-                    module: '-- ALL --',
+                    userId: '-- Any User --',
+                    module: '-- Any Module --',
                     errorsOnly: false,
                     warningsOnly: false
                 };
@@ -130,6 +158,10 @@ export function fitlerByWarnings() {
 
 export function selectModule(moduleName) {
     return { type: SELECT_MODULE, payload: moduleName};
+}
+
+export function selectUser(userId) {
+    return { type: SELECT_USER, payload: userId};
 }
 
 export function clearAll() {

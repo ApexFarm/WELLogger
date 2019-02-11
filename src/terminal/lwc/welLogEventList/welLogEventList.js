@@ -5,6 +5,7 @@ export default class WelLogEventList extends LightningElement {
     @api isScrollLocked = false;
     @track logEvents = [];
     @track filterModule;
+    @track filterUserId;
     unsubscribe;
 
     scroll() {
@@ -21,6 +22,7 @@ export default class WelLogEventList extends LightningElement {
             let { logEvents } = store.getState();
             this.logEvents = logEvents.items;
             this.filterModule = logEvents.filters.module;
+            this.filterUserId = logEvents.filters.userId;
         });
     }
 
